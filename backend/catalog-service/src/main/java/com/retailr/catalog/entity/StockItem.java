@@ -3,6 +3,7 @@ package com.retailr.catalog.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "stock_items", uniqueConstraints = {
@@ -25,11 +26,15 @@ public class StockItem {
     @JoinColumn(name = "warehouse_id", nullable = false)
     private Warehouse warehouse;
 
-    @Column(nullable = false)
-    private Integer quantity;
+    @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
+    @NotNull
+    @Builder.Default
+    private Integer quantity = 0;
 
-    @Column(nullable = false)
-    private Integer reservedQuantity;
+    @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
+    @NotNull
+    @Builder.Default
+    private Integer reservedQuantity = 0;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;

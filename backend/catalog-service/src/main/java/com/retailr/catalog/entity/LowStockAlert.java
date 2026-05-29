@@ -3,6 +3,8 @@ package com.retailr.catalog.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Entity
 @Table(name = "low_stock_alerts")
@@ -25,8 +27,10 @@ public class LowStockAlert {
     @Column
     private LocalDateTime acknowledgedAt;
 
-    @Column(name = "acknowledged_by")
-    private Long acknowledgedByUserId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "acknowledged_by")
+    @NotFound(action = NotFoundAction.IGNORE)
+    private User acknowledgedBy;
 
     @PrePersist
     protected void onCreate() {

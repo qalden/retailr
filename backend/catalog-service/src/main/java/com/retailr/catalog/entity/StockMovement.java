@@ -3,6 +3,8 @@ package com.retailr.catalog.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Entity
 @Table(name = "stock_movements")
@@ -31,8 +33,10 @@ public class StockMovement {
     @Column
     private Long referenceId;
 
-    @Column(name = "created_by")
-    private Long createdByUserId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "created_by")
+    @NotFound(action = NotFoundAction.IGNORE)
+    private User createdBy;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

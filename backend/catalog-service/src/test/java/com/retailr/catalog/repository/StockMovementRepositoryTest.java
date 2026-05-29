@@ -76,7 +76,7 @@ class StockMovementRepositoryTest {
             .movementType("IN")
             .referenceType("ORDER")
             .referenceId(1001L)
-            .createdByUserId(100L)
+            .createdBy(null)
             .build();
 
         StockMovement saved = stockMovementRepository.save(movement);
@@ -85,7 +85,7 @@ class StockMovementRepositoryTest {
         assertEquals("IN", saved.getMovementType());
         assertEquals("ORDER", saved.getReferenceType());
         assertEquals(1001L, saved.getReferenceId());
-        assertEquals(100L, saved.getCreatedByUserId());
+        assertNull(saved.getCreatedBy());
     }
 
     @Test
