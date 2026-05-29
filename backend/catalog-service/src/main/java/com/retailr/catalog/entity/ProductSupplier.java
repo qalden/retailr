@@ -2,6 +2,7 @@ package com.retailr.catalog.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "product_suppliers")
@@ -22,8 +23,11 @@ public class ProductSupplier {
     @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
-    @Column(name = "supplier_sku")
-    private String supplierSku;
+    @Column(nullable = false)
+    private BigDecimal supplyCost;
+
+    @Column(nullable = false)
+    private Integer minimumOrderQuantity;
 
     @Column(nullable = false)
     private Integer leadTimeDays;

@@ -19,7 +19,10 @@ public class Supplier {
     private String name;
 
     @Column(nullable = false)
-    private String contactEmail;
+    private String contactPerson;
+
+    @Column(nullable = false)
+    private String email;
 
     @Column(nullable = false)
     private String phone;
