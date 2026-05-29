@@ -6,6 +6,7 @@ import com.retailr.catalog.dto.LowStockAlertDTO;
 import com.retailr.catalog.dto.StockItemDTO;
 import com.retailr.catalog.dto.StockMovementDTO;
 import com.retailr.catalog.exception.GlobalExceptionHandler;
+import com.retailr.catalog.exception.StockException;
 import com.retailr.catalog.service.StockService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -169,14 +170,26 @@ class StockControllerTest {
     }
 
     @Test
-    void testReserveStock_InsufficientStock() throws Exception {
+    void testReserveStock_StockItemNotFound() throws Exception {
         stubStockService.setupThrowException(
-            new IllegalArgumentException("Insufficient stock available. Available: 10, Requested: 20"));
+            new IllegalArgumentException("StockItem not found: 999"));
 
-        mockMvc.perform(post("/api/v1/stock/1/reserve")
+        mockMvc.perform(post("/api/v1/stock/999/reserve")
             .param("quantity", "20"))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.error").value("RESOURCE_NOT_FOUND"))
+            .andExpect(jsonPath("$.message").value("StockItem not found: 999"));
+    }
+
+    @Test
+    void testReserveStock_InsufficientStock() throws Exception {
+        stubStockService.setupThrowException(
+            new StockException("Insufficient stock available. Available: 10, Requested: 20"));
+
+        mockMvc.perform(post("/api/v1/stock/1/reserve")
+            .param("quantity", "20"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("STOCK_ERROR"))
             .andExpect(jsonPath("$.message").value("Insufficient stock available. Available: 10, Requested: 20"));
     }
 
@@ -250,6 +263,30 @@ class StockControllerTest {
         mockMvc.perform(post("/api/v1/stock/1/release")
             .param("quantity", "10"))
             .andExpect(status().isOk());
+    }
+
+    @Test
+    void testReleaseStock_StockItemNotFound() throws Exception {
+        stubStockService.setupThrowException(
+            new IllegalArgumentException("StockItem not found: 999"));
+
+        mockMvc.perform(post("/api/v1/stock/999/release")
+            .param("quantity", "10"))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.error").value("RESOURCE_NOT_FOUND"))
+            .andExpect(jsonPath("$.message").value("StockItem not found: 999"));
+    }
+
+    @Test
+    void testReleaseStock_ExceedsReserved() throws Exception {
+        stubStockService.setupThrowException(
+            new StockException("Cannot release more than reserved. Reserved: 5, Requested: 10"));
+
+        mockMvc.perform(post("/api/v1/stock/1/release")
+            .param("quantity", "10"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("STOCK_ERROR"))
+            .andExpect(jsonPath("$.message").value("Cannot release more than reserved. Reserved: 5, Requested: 10"));
     }
 
     @Test

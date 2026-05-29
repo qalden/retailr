@@ -7,6 +7,7 @@ import com.retailr.catalog.dto.LowStockAlertDTO;
 import com.retailr.catalog.entity.StockItem;
 import com.retailr.catalog.entity.StockMovement;
 import com.retailr.catalog.entity.LowStockAlert;
+import com.retailr.catalog.exception.StockException;
 import com.retailr.catalog.repository.StockItemRepository;
 import com.retailr.catalog.repository.StockMovementRepository;
 import com.retailr.catalog.repository.LowStockAlertRepository;
@@ -94,7 +95,7 @@ public class StockService {
 
         Integer available = item.getAvailableQuantity();
         if (available < quantity) {
-            throw new IllegalArgumentException("Insufficient stock available. Available: " + available + ", Requested: " + quantity);
+            throw new StockException("Insufficient stock available. Available: " + available + ", Requested: " + quantity);
         }
 
         item.setReservedQuantity(item.getReservedQuantity() + quantity);
@@ -107,7 +108,7 @@ public class StockService {
 
         Integer currentReserved = item.getReservedQuantity();
         if (currentReserved < quantity) {
-            throw new IllegalArgumentException("Cannot release more than reserved. Reserved: " + currentReserved + ", Requested: " + quantity);
+            throw new StockException("Cannot release more than reserved. Reserved: " + currentReserved + ", Requested: " + quantity);
         }
 
         item.setReservedQuantity(currentReserved - quantity);

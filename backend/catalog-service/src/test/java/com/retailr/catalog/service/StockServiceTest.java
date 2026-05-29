@@ -7,6 +7,7 @@ import com.retailr.catalog.entity.Category;
 import com.retailr.catalog.entity.Product;
 import com.retailr.catalog.entity.StockItem;
 import com.retailr.catalog.entity.Warehouse;
+import com.retailr.catalog.exception.StockException;
 import com.retailr.catalog.repository.CategoryRepository;
 import com.retailr.catalog.repository.ProductRepository;
 import com.retailr.catalog.repository.StockItemRepository;
@@ -132,7 +133,7 @@ class StockServiceTest {
     void testReserveStock_InsufficientInventory() {
         int quantityToReserve = 100;
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        StockException exception = assertThrows(StockException.class,
             () -> stockService.reserveStock(testStockItem.getId(), quantityToReserve));
 
         assertTrue(exception.getMessage().contains("Insufficient stock available"));
