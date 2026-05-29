@@ -1,0 +1,11 @@
+com/retailr/catalog/repository/StockMovementRepositoryTest.class
+com/retailr/catalog/repository/ProductRepositoryTest.class
+com/retailr/catalog/controller/StockControllerTest.class
+com/retailr/catalog/repository/StockItemRepositoryTest.class
+com/retailr/catalog/controller/ProductControllerTest$StubProductService.class
+com/retailr/catalog/repository/LowStockAlertRepositoryTest.class
+com/retailr/catalog/service/ProductServiceTest.class
+com/retailr/catalog/repository/WarehouseRepositoryTest.class
+com/retailr/catalog/service/StockServiceTest.class
+com/retailr/catalog/controller/StockControllerTest$StubStockService.class
+com/retailr/catalog/controller/ProductControllerTest.class

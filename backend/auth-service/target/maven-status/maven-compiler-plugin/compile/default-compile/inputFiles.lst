@@ -1,0 +1,17 @@
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/dto/RefreshTokenRequest.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/service/AuthService.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/entity/Role.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/controller/AuthController.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/exception/AuthException.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/repository/UserRepository.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/config/SecurityConfig.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/security/JwtProvider.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/entity/User.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/dto/UserDTO.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/repository/RoleRepository.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/exception/GlobalExceptionHandler.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/dto/ErrorResponse.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/dto/LoginResponse.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/mapper/UserMapper.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/dto/LoginRequest.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/auth-service/src/main/java/com/retailr/auth/dto/RefreshTokenResponse.java

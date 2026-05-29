@@ -1,0 +1,3 @@
+com/retailr/gateway/config/GatewayConfig.class
+com/retailr/gateway/security/JwtAuthenticationFilter.class
+com/retailr/gateway/GatewayApplication.class

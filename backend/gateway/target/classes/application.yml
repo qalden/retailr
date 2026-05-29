@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+    discovery:
+      client:
+        simple:
+          instances:
+            auth-service:
+              - uri: http://auth-service:8081
+            catalog-service:
+              - uri: http://catalog-service:8082
+            order-service:
+              - uri: http://order-service:8083
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
