@@ -5,6 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "stock_movements")
@@ -22,6 +23,7 @@ public class StockMovement {
     private StockItem stockItem;
 
     @Column(nullable = false)
+    @NotNull
     private Integer quantityDelta;
 
     @Column(nullable = false)
