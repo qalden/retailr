@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/suppliers")
 @Slf4j
 public class SupplierController {
     private static final int DEFAULT_PAGE = 0;
@@ -27,14 +27,14 @@ public class SupplierController {
         this.supplierService = supplierService;
     }
 
-    @PostMapping("/suppliers")
+    @PostMapping("")
     public ResponseEntity<SupplierDTO> createSupplier(@Valid @RequestBody CreateSupplierRequest request) {
         log.info("Creating supplier with name: {}", request.getName());
         SupplierDTO supplier = supplierService.createSupplier(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(supplier);
     }
 
-    @GetMapping("/suppliers")
+    @GetMapping("")
     public ResponseEntity<Page<SupplierDTO>> listSuppliers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
@@ -45,14 +45,14 @@ public class SupplierController {
         return ResponseEntity.ok(suppliers);
     }
 
-    @GetMapping("/suppliers/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<SupplierDTO> getSupplier(@PathVariable Long id) {
         log.info("Fetching supplier with ID: {}", id);
         SupplierDTO supplier = supplierService.getSupplier(id);
         return ResponseEntity.ok(supplier);
     }
 
-    @PutMapping("/suppliers/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<SupplierDTO> updateSupplier(
             @PathVariable Long id,
             @Valid @RequestBody UpdateSupplierRequest request) {
@@ -61,7 +61,7 @@ public class SupplierController {
         return ResponseEntity.ok(supplier);
     }
 
-    @DeleteMapping("/suppliers/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSupplier(@PathVariable Long id) {
         log.info("Deleting supplier with ID: {}", id);
         supplierService.deleteSupplier(id);

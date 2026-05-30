@@ -5,6 +5,7 @@ import com.retailr.catalog.dto.CreateSupplierRequest;
 import com.retailr.catalog.dto.SupplierDTO;
 import com.retailr.catalog.dto.UpdateSupplierRequest;
 import com.retailr.catalog.exception.GlobalExceptionHandler;
+import com.retailr.catalog.exception.StockException;
 import com.retailr.catalog.service.SupplierService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -265,6 +265,62 @@ class SupplierControllerTest {
             .andExpect(jsonPath("$.message").value("Supplier not found: 999"));
     }
 
+    @Test
+    void testListSuppliers_InvalidPagination() throws Exception {
+        // Test negative page
+        mockMvc.perform(get("/api/v1/suppliers")
+            .param("page", "-1")
+            .param("size", "20"))
+            .andExpect(status().isNotFound());
+
+        // Test zero size
+        mockMvc.perform(get("/api/v1/suppliers")
+            .param("page", "0")
+            .param("size", "0"))
+            .andExpect(status().isNotFound());
+
+        // Test size exceeds max
+        mockMvc.perform(get("/api/v1/suppliers")
+            .param("page", "0")
+            .param("size", "101"))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void testCreateSupplier_StockException() throws Exception {
+        CreateSupplierRequest request = CreateSupplierRequest.builder()
+            .name("Acme Supplies")
+            .contactPerson("John Doe")
+            .email("john@acme.com")
+            .phone("555-1234")
+            .address("123 Main St")
+            .build();
+
+        stubSupplierService.setupThrowStockException();
+
+        mockMvc.perform(post("/api/v1/suppliers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("STOCK_ERROR"));
+    }
+
+    @Test
+    void testUpdateSupplier_StockException() throws Exception {
+        UpdateSupplierRequest request = UpdateSupplierRequest.builder()
+            .name("Acme Supplies Inc")
+            .contactPerson("Jane Doe")
+            .build();
+
+        stubSupplierService.setupThrowStockException();
+
+        mockMvc.perform(put("/api/v1/suppliers/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("STOCK_ERROR"));
+    }
+
     /**
      * Test stub for SupplierService - works around Java 25 mocking limitations
      */
@@ -272,6 +328,7 @@ class SupplierControllerTest {
         private SupplierDTO supplierResponse;
         private Page<SupplierDTO> pageResponse;
         private RuntimeException exceptionToThrow;
+        private boolean throwStockException = false;
 
         public StubSupplierService() {
             super(null);
@@ -280,6 +337,7 @@ class SupplierControllerTest {
         void setupCreateSupplier(SupplierDTO dto) {
             this.supplierResponse = dto;
             this.exceptionToThrow = null;
+            this.throwStockException = false;
         }
 
         void setupGetSupplier(Long id, SupplierDTO dto) {
@@ -289,11 +347,13 @@ class SupplierControllerTest {
 
         void setupListSuppliers(Page<SupplierDTO> page) {
             this.pageResponse = page;
+            this.exceptionToThrow = null;
         }
 
         void setupUpdateSupplier(SupplierDTO dto) {
             this.supplierResponse = dto;
             this.exceptionToThrow = null;
+            this.throwStockException = false;
         }
 
         void setupDeleteSuccess() {
@@ -302,6 +362,11 @@ class SupplierControllerTest {
 
         void setupThrowException(RuntimeException ex) {
             this.exceptionToThrow = ex;
+        }
+
+        void setupThrowStockException() {
+            this.throwStockException = true;
+            this.exceptionToThrow = null;
         }
 
         @Override
@@ -334,6 +399,9 @@ class SupplierControllerTest {
         }
 
         private void throwIfNeeded() {
+            if (throwStockException) {
+                throw new StockException("Insufficient stock available");
+            }
             if (exceptionToThrow != null) {
                 throw exceptionToThrow;
             }

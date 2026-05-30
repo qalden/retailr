@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.retailr.catalog.controller.StockControllerTest" time="0.207" tests="17" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.retailr.catalog.controller.SupplierControllerTest" time="0.078" tests="15" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="25"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -65,127 +65,116 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="69.0"/>
   </properties>
-  <testcase name="testGetStockItem_NotFound" classname="com.retailr.catalog.controller.StockControllerTest" time="0.106">
-    <system-out><![CDATA[2026-05-30T09:57:27.024+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.024+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.025+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
-2026-05-30T09:57:27.044+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Getting stock item: 999
-2026-05-30T09:57:27.045+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Illegal argument: StockItem not found: 999
+  <testcase name="testDeleteSupplier_NotFound" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.005">
+    <system-out><![CDATA[2026-05-30T09:57:27.180+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.180+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.180+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.180+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Deleting supplier with ID: 999
+2026-05-30T09:57:27.180+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Illegal argument: Supplier not found: 999
 ]]></system-out>
   </testcase>
-  <testcase name="testGetStockItemByProductAndWarehouse_Success" classname="com.retailr.catalog.controller.StockControllerTest" time="0.007">
-    <system-out><![CDATA[2026-05-30T09:57:27.079+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.079+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.079+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.080+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Getting stock for product: 10, warehouse: 20
+  <testcase name="testListSuppliers_Success" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.01">
+    <system-out><![CDATA[2026-05-30T09:57:27.183+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.183+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.183+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.185+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Fetching suppliers page: 0, size: 20
 ]]></system-out>
   </testcase>
-  <testcase name="testGetUnacknowledgedAlerts_Success" classname="com.retailr.catalog.controller.StockControllerTest" time="0.009">
-    <system-out><![CDATA[2026-05-30T09:57:27.085+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.085+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.086+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.086+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Getting unacknowledged low stock alerts
+  <testcase name="testCreateSupplier_StockException" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.013">
+    <system-out><![CDATA[2026-05-30T09:57:27.193+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.193+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.193+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.203+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Creating supplier with name: Acme Supplies
+2026-05-30T09:57:27.203+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Stock exception: Insufficient stock available
 ]]></system-out>
   </testcase>
-  <testcase name="testReserveStock_InsufficientStock" classname="com.retailr.catalog.controller.StockControllerTest" time="0.005">
-    <system-out><![CDATA[2026-05-30T09:57:27.094+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.094+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.094+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.095+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Reserving stock: item=1, quantity=20
-2026-05-30T09:57:27.095+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Stock exception: Insufficient stock available. Available: 10, Requested: 20
+  <testcase name="testCreateSupplier_InvalidEmail" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.005">
+    <system-out><![CDATA[2026-05-30T09:57:27.206+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.206+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.206+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
 ]]></system-out>
   </testcase>
-  <testcase name="testReleaseStock_Success" classname="com.retailr.catalog.controller.StockControllerTest" time="0.004">
-    <system-out><![CDATA[2026-05-30T09:57:27.099+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.099+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.099+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.100+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Releasing stock: item=1, quantity=10
+  <testcase name="testDeleteSupplier_Success" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.003">
+    <system-out><![CDATA[2026-05-30T09:57:27.211+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.211+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.211+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.211+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Deleting supplier with ID: 1
 ]]></system-out>
   </testcase>
-  <testcase name="testGetStockByProduct_Empty" classname="com.retailr.catalog.controller.StockControllerTest" time="0.006">
-    <system-out><![CDATA[2026-05-30T09:57:27.104+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.104+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.104+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.104+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Getting stock for product: 999
+  <testcase name="testUpdateSupplier_Success" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.005">
+    <system-out><![CDATA[2026-05-30T09:57:27.214+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.214+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.214+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.216+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Updating supplier with ID: 1
 ]]></system-out>
   </testcase>
-  <testcase name="testGetStockItem_Success" classname="com.retailr.catalog.controller.StockControllerTest" time="0.004">
-    <system-out><![CDATA[2026-05-30T09:57:27.109+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.109+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.109+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.109+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Getting stock item: 1
+  <testcase name="testGetSupplier_Success" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.004">
+    <system-out><![CDATA[2026-05-30T09:57:27.220+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.220+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.220+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.220+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Fetching supplier with ID: 1
 ]]></system-out>
   </testcase>
-  <testcase name="testRecordMovement_InvalidRequest" classname="com.retailr.catalog.controller.StockControllerTest" time="0.027">
-    <system-out><![CDATA[2026-05-30T09:57:27.113+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.113+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.113+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+  <testcase name="testUpdateSupplier_ValidationError" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.004">
+    <system-out><![CDATA[2026-05-30T09:57:27.223+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.223+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.223+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
 ]]></system-out>
   </testcase>
-  <testcase name="testReleaseStock_StockItemNotFound" classname="com.retailr.catalog.controller.StockControllerTest" time="0.004">
-    <system-out><![CDATA[2026-05-30T09:57:27.140+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.140+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.140+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.140+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Releasing stock: item=999, quantity=10
-2026-05-30T09:57:27.141+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Illegal argument: StockItem not found: 999
+  <testcase name="testGetSupplier_NotFound" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.003">
+    <system-out><![CDATA[2026-05-30T09:57:27.227+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.227+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.227+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.227+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Fetching supplier with ID: 999
+2026-05-30T09:57:27.228+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Illegal argument: Supplier not found: 999
 ]]></system-out>
   </testcase>
-  <testcase name="testGetStockByProduct_Success" classname="com.retailr.catalog.controller.StockControllerTest" time="0.003">
-    <system-out><![CDATA[2026-05-30T09:57:27.144+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.144+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.144+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.144+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Getting stock for product: 10
+  <testcase name="testListSuppliers_InvalidPagination" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.003">
+    <system-out><![CDATA[2026-05-30T09:57:27.230+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.230+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.230+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.230+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Fetching suppliers page: -1, size: 20
+2026-05-30T09:57:27.230+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Illegal argument: Page number cannot be negative
+2026-05-30T09:57:27.231+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Fetching suppliers page: 0, size: 0
+2026-05-30T09:57:27.231+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Illegal argument: Page size must be greater than 0
+2026-05-30T09:57:27.231+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Fetching suppliers page: 0, size: 101
+2026-05-30T09:57:27.231+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Illegal argument: Page size cannot exceed 100
 ]]></system-out>
   </testcase>
-  <testcase name="testGetStockByWarehouse_Success" classname="com.retailr.catalog.controller.StockControllerTest" time="0.004">
-    <system-out><![CDATA[2026-05-30T09:57:27.148+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.148+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.148+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.149+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Getting stock for warehouse: 20
+  <testcase name="testCreateSupplier_ValidationError" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.005">
+    <system-out><![CDATA[2026-05-30T09:57:27.233+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.233+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.233+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
 ]]></system-out>
   </testcase>
-  <testcase name="testReleaseStock_ExceedsReserved" classname="com.retailr.catalog.controller.StockControllerTest" time="0.004">
-    <system-out><![CDATA[2026-05-30T09:57:27.152+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.153+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.153+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.153+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Releasing stock: item=1, quantity=10
-2026-05-30T09:57:27.153+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Stock exception: Cannot release more than reserved. Reserved: 5, Requested: 10
+  <testcase name="testUpdateSupplier_NotFound" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.004">
+    <system-out><![CDATA[2026-05-30T09:57:27.238+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.238+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.238+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.239+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Updating supplier with ID: 999
+2026-05-30T09:57:27.239+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Illegal argument: Supplier not found: 999
 ]]></system-out>
   </testcase>
-  <testcase name="testGetAlertsForStockItem_Success" classname="com.retailr.catalog.controller.StockControllerTest" time="0.004">
-    <system-out><![CDATA[2026-05-30T09:57:27.157+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.157+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.157+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.157+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Getting alerts for stock item: 1
+  <testcase name="testListSuppliers_EmptyList" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.003">
+    <system-out><![CDATA[2026-05-30T09:57:27.241+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.242+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.242+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.242+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Fetching suppliers page: 0, size: 20
 ]]></system-out>
   </testcase>
-  <testcase name="testGetMovementsForStockItem_Success" classname="com.retailr.catalog.controller.StockControllerTest" time="0.005">
-    <system-out><![CDATA[2026-05-30T09:57:27.161+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.161+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.161+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.161+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Getting movements for stock item: 1
+  <testcase name="testCreateSupplier_Success" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.005">
+    <system-out><![CDATA[2026-05-30T09:57:27.246+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.246+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.246+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.248+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Creating supplier with name: Acme Supplies
 ]]></system-out>
   </testcase>
-  <testcase name="testReserveStock_StockItemNotFound" classname="com.retailr.catalog.controller.StockControllerTest" time="0.003">
-    <system-out><![CDATA[2026-05-30T09:57:27.165+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.165+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.165+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.165+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Reserving stock: item=999, quantity=20
-2026-05-30T09:57:27.165+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Illegal argument: StockItem not found: 999
-]]></system-out>
-  </testcase>
-  <testcase name="testReserveStock_Success" classname="com.retailr.catalog.controller.StockControllerTest" time="0.003">
-    <system-out><![CDATA[2026-05-30T09:57:27.169+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.169+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.169+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.169+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Reserving stock: item=1, quantity=20
-]]></system-out>
-  </testcase>
-  <testcase name="testRecordMovement_Success" classname="com.retailr.catalog.controller.StockControllerTest" time="0.006">
-    <system-out><![CDATA[2026-05-30T09:57:27.172+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
-2026-05-30T09:57:27.172+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-05-30T09:57:27.172+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
-2026-05-30T09:57:27.174+03:00  INFO 57729 --- [           main] c.r.catalog.controller.StockController   : Recording stock movement: INBOUND
+  <testcase name="testUpdateSupplier_StockException" classname="com.retailr.catalog.controller.SupplierControllerTest" time="0.004">
+    <system-out><![CDATA[2026-05-30T09:57:27.250+03:00  INFO 57729 --- [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-30T09:57:27.251+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-30T09:57:27.251+03:00  INFO 57729 --- [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-30T09:57:27.252+03:00  INFO 57729 --- [           main] c.r.c.controller.SupplierController      : Updating supplier with ID: 1
+2026-05-30T09:57:27.252+03:00 ERROR 57729 --- [           main] c.r.c.exception.GlobalExceptionHandler   : Stock exception: Insufficient stock available
 ]]></system-out>
   </testcase>
 </testsuite>
