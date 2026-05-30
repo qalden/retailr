@@ -60,6 +60,11 @@ public class ProductService {
             .map(this::toDTO);
     }
 
+    public Page<ProductDTO> listActiveProducts(Pageable pageable) {
+        return productRepository.findAll(pageable)
+            .map(this::toDTO);
+    }
+
     public Page<ProductDTO> listProductsByCategory(Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId)
             .orElseThrow(() -> new IllegalArgumentException("Category not found: " + categoryId));

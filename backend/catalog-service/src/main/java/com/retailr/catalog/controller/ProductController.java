@@ -56,7 +56,7 @@ public class ProductController {
             @RequestParam(defaultValue = "20") int size) {
         log.info("Fetching active products page: {}, size: {}", page, size);
         Pageable pageable = PageRequest.of(page, size);
-        Page<ProductDTO> products = productService.listProducts(pageable);
+        Page<ProductDTO> products = productService.listActiveProducts(pageable);
         return ResponseEntity.ok(products);
     }
 

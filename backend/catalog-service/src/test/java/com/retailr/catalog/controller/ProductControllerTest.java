@@ -487,6 +487,12 @@ class ProductControllerTest {
         }
 
         @Override
+        public Page<ProductDTO> listActiveProducts(Pageable pageable) {
+            throwIfNeeded();
+            return pageResponse != null ? pageResponse : new PageImpl<>(new ArrayList<>());
+        }
+
+        @Override
         public Page<ProductDTO> listProductsByCategory(Long categoryId, Pageable pageable) {
             throwIfNeeded();
             return pageResponse != null ? pageResponse : new PageImpl<>(new ArrayList<>());
