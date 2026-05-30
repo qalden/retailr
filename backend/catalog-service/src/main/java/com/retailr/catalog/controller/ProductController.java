@@ -20,6 +20,10 @@ import java.util.List;
 @RequestMapping("/api/v1")
 @Slf4j
 public class ProductController {
+    private static final int DEFAULT_PAGE = 0;
+    private static final int DEFAULT_PAGE_SIZE = 20;
+    private static final int MAX_PAGE_SIZE = 100;
+
     private final ProductService productService;
 
     public ProductController(ProductService productService) {
@@ -31,6 +35,36 @@ public class ProductController {
         log.info("Creating product with SKU: {}", request.getSku());
         ProductDTO product = productService.createProduct(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
+    }
+
+    @GetMapping("/products/active")
+    public ResponseEntity<Page<ProductDTO>> listActiveProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        log.info("Fetching active products page: {}, size: {}", page, size);
+        validatePagination(page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductDTO> products = productService.listActiveProducts(pageable);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/products/category/{categoryId}")
+    public ResponseEntity<Page<ProductDTO>> listProductsByCategory(
+            @PathVariable Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        log.info("Fetching products for category: {}", categoryId);
+        validatePagination(page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductDTO> products = productService.listProductsByCategory(categoryId, pageable);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/products/supplier/{supplierId}")
+    public ResponseEntity<List<ProductDTO>> getProductsBySupplier(@PathVariable Long supplierId) {
+        log.info("Fetching products for supplier: {}", supplierId);
+        List<ProductDTO> products = productService.getProductsBySupplier(supplierId);
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/products/{id}")
@@ -45,29 +79,9 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         log.info("Fetching products page: {}, size: {}", page, size);
+        validatePagination(page, size);
         Pageable pageable = PageRequest.of(page, size);
         Page<ProductDTO> products = productService.listProducts(pageable);
-        return ResponseEntity.ok(products);
-    }
-
-    @GetMapping("/products/active")
-    public ResponseEntity<Page<ProductDTO>> listActiveProducts(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        log.info("Fetching active products page: {}, size: {}", page, size);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ProductDTO> products = productService.listActiveProducts(pageable);
-        return ResponseEntity.ok(products);
-    }
-
-    @GetMapping("/products/category/{categoryId}")
-    public ResponseEntity<Page<ProductDTO>> listProductsByCategory(
-            @PathVariable Long categoryId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        log.info("Fetching products for category: {}", categoryId);
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ProductDTO> products = productService.listProductsByCategory(categoryId, pageable);
         return ResponseEntity.ok(products);
     }
 
@@ -87,13 +101,6 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/products/supplier/{supplierId}")
-    public ResponseEntity<List<ProductDTO>> getProductsBySupplier(@PathVariable Long supplierId) {
-        log.info("Fetching products for supplier: {}", supplierId);
-        List<ProductDTO> products = productService.getProductsBySupplier(supplierId);
-        return ResponseEntity.ok(products);
-    }
-
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         log.info("Fetching all categories");
@@ -106,5 +113,17 @@ public class ProductController {
         log.info("Fetching category with ID: {}", id);
         CategoryDTO category = productService.getCategory(id);
         return ResponseEntity.ok(category);
+    }
+
+    private void validatePagination(int page, int size) {
+        if (page < 0) {
+            throw new IllegalArgumentException("Page number cannot be negative");
+        }
+        if (size <= 0) {
+            throw new IllegalArgumentException("Page size must be greater than 0");
+        }
+        if (size > MAX_PAGE_SIZE) {
+            throw new IllegalArgumentException("Page size cannot exceed 100");
+        }
     }
 }

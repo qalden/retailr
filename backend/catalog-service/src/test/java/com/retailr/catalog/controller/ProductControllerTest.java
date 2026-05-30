@@ -511,6 +511,7 @@ class ProductControllerTest {
 
         @Override
         public List<ProductDTO> getProductsBySupplier(Long supplierId) {
+            throwIfNeeded();
             return listResponse != null ? listResponse : new ArrayList<>();
         }
 
