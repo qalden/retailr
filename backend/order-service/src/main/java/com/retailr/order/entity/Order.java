@@ -1,6 +1,7 @@
 package com.retailr.order.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,10 +32,14 @@ public class Order {
     private OrderStatus status;
 
     @Column(nullable = false, precision = 12, scale = 2)
+    @DecimalMin(value = "0.00", message = "Total amount must be non-negative")
     private BigDecimal totalAmount;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
     @Column
     private LocalDateTime confirmedAt;
@@ -53,11 +58,17 @@ public class Order {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
         if (status == null) {
             status = OrderStatus.DRAFT;
         }
         if (totalAmount == null) {
             totalAmount = BigDecimal.ZERO;
         }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
     }
 }
