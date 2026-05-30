@@ -1,6 +1,6 @@
 package com.retailr.order.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.retailr.order.entity.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,8 +17,7 @@ public class OrderDTO {
     private Long id;
     private String orderNumber;
     private CustomerDTO customer;
-    @JsonProperty("status")
-    private String status;
+    private OrderStatus status;
     private BigDecimal totalAmount;
     private LocalDateTime createdAt;
     private LocalDateTime confirmedAt;

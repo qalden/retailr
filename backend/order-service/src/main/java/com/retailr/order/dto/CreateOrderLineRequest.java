@@ -22,6 +22,6 @@ public class CreateOrderLineRequest {
     private Integer quantity;
 
     @NotNull(message = "Unit price cannot be null")
-    @DecimalMin(value = "0.00", message = "Unit price must be greater than or equal to 0.00")
+    @DecimalMin(value = "0.01", message = "Unit price must be greater than 0.00")
     private BigDecimal unitPrice;
 }
