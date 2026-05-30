@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.time.LocalDateTime;
+import org.springframework.data.domain.PageImpl;
+import com.retailr.order.dto.CustomerDTO;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -115,7 +115,17 @@ class CustomerControllerIntegrationTest {
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
+        Object body = response.getBody();
+        assertThat(body).isNotNull();
+        // Verify it's a page response with actual content
+        if (body instanceof java.util.Map) {
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> pageData = (java.util.Map<String, Object>) body;
+            assertThat(pageData.get("content")).isNotNull();
+            assertThat(pageData.get("totalElements")).isNotNull();
+            long totalElements = ((Number) pageData.get("totalElements")).longValue();
+            assertThat(totalElements).isGreaterThanOrEqualTo(1);
+        }
     }
 
     @Test

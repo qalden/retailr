@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.retailr.order.config.TestSecurityConfig;
 import com.retailr.order.dto.CreateOrderLineRequest;
 import com.retailr.order.dto.CreateOrderRequest;
+import com.retailr.order.dto.OrderDTO;
 import com.retailr.order.dto.UpdateOrderStatusRequest;
 import com.retailr.order.entity.Customer;
 import com.retailr.order.entity.OrderStatus;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -50,7 +52,6 @@ class OrderControllerIntegrationTest {
     private static final String BASE_URL = "/api/v1/orders";
 
     private Customer testCustomer;
-    private Customer anotherCustomer;
     private Long testCustomerId;
 
     @BeforeEach
@@ -146,7 +147,17 @@ class OrderControllerIntegrationTest {
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
+        Object body = response.getBody();
+        assertThat(body).isNotNull();
+        // Verify it's a page response with actual content
+        if (body instanceof java.util.Map) {
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> pageData = (java.util.Map<String, Object>) body;
+            assertThat(pageData.get("content")).isNotNull();
+            assertThat(pageData.get("totalElements")).isNotNull();
+            long totalElements = ((Number) pageData.get("totalElements")).longValue();
+            assertThat(totalElements).isGreaterThanOrEqualTo(1);
+        }
     }
 
     @Test
@@ -170,7 +181,7 @@ class OrderControllerIntegrationTest {
     }
 
     @Test
-    void testConfirmOrder_WithoutLines_MaySucceed() {
+    void testConfirmOrder_WithoutLines_MayFailDueToUnavailableService() {
         // Given - Create order without lines
         var order = orderRepository.save(com.retailr.order.entity.Order.builder()
                 .orderNumber("ORD-TEST-NO-LINES")

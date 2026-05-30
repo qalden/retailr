@@ -6,7 +6,6 @@ import com.retailr.order.dto.CreateOrderRequest;
 import com.retailr.order.dto.OrderDTO;
 import com.retailr.order.entity.Customer;
 import com.retailr.order.entity.Order;
-import com.retailr.order.entity.OrderLine;
 import com.retailr.order.entity.OrderStatus;
 import com.retailr.order.exception.CustomerNotFoundException;
 import com.retailr.order.exception.InsufficientStockException;
@@ -20,17 +19,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,19 +84,26 @@ class OrderServiceIntegrationTest {
         orderStockReservationRepository.deleteAll();
     }
 
-    @Test
-    void testCreateOrder_Success() {
-        // Given
+    private CreateOrderRequest createOrderRequest(long productId, int quantity, BigDecimal unitPrice) {
         CreateOrderLineRequest lineRequest = CreateOrderLineRequest.builder()
-                .productId(1L)
-                .quantity(5)
-                .unitPrice(new BigDecimal("100.00"))
+                .productId(productId)
+                .quantity(quantity)
+                .unitPrice(unitPrice)
                 .build();
-
-        CreateOrderRequest request = CreateOrderRequest.builder()
+        return CreateOrderRequest.builder()
                 .customerId(testCustomerId)
                 .lines(List.of(lineRequest))
                 .build();
+    }
+
+    private CreateOrderRequest createOrderRequest(long productId, int quantity) {
+        return createOrderRequest(productId, quantity, new BigDecimal("100.00"));
+    }
+
+    @Test
+    void testCreateOrder_Success() {
+        // Given
+        CreateOrderRequest request = createOrderRequest(1L, 5);
 
         // When
         OrderDTO createdOrder = orderService.createOrder(request);
@@ -134,6 +136,8 @@ class OrderServiceIntegrationTest {
                 .lines(List.of(lineRequest))
                 .build();
 
+        // Note: keeping inline here because it needs customerId(999L) instead of testCustomerId
+
         // When & Then
         assertThatThrownBy(() -> orderService.createOrder(request))
                 .isInstanceOf(CustomerNotFoundException.class)
@@ -161,16 +165,7 @@ class OrderServiceIntegrationTest {
     @Test
     void testGetOrder_Success() {
         // Given
-        CreateOrderLineRequest lineRequest = CreateOrderLineRequest.builder()
-                .productId(1L)
-                .quantity(5)
-                .unitPrice(new BigDecimal("100.00"))
-                .build();
-
-        CreateOrderRequest createRequest = CreateOrderRequest.builder()
-                .customerId(testCustomerId)
-                .lines(List.of(lineRequest))
-                .build();
+        CreateOrderRequest createRequest = createOrderRequest(1L, 5);
 
         OrderDTO created = orderService.createOrder(createRequest);
 
@@ -195,16 +190,7 @@ class OrderServiceIntegrationTest {
     @Test
     void testGetOrderByNumber_Success() {
         // Given
-        CreateOrderLineRequest lineRequest = CreateOrderLineRequest.builder()
-                .productId(1L)
-                .quantity(5)
-                .unitPrice(new BigDecimal("100.00"))
-                .build();
-
-        CreateOrderRequest createRequest = CreateOrderRequest.builder()
-                .customerId(testCustomerId)
-                .lines(List.of(lineRequest))
-                .build();
+        CreateOrderRequest createRequest = createOrderRequest(1L, 5);
 
         OrderDTO created = orderService.createOrder(createRequest);
 
@@ -241,23 +227,14 @@ class OrderServiceIntegrationTest {
 
         // Then
         assertThat(page).isNotNull();
-        assertThat(page.getTotalElements()).isGreaterThanOrEqualTo(3);
-        assertThat(page.getContent().size()).isGreaterThan(0);
+        assertThat(page.getTotalElements()).isEqualTo(3);
+        assertThat(page.getContent()).hasSize(3);  // All 3 items returned since total < page size
     }
 
     @Test
     void testConfirmOrder_Success() {
         // Given
-        CreateOrderLineRequest lineRequest = CreateOrderLineRequest.builder()
-                .productId(1L)
-                .quantity(5)
-                .unitPrice(new BigDecimal("100.00"))
-                .build();
-
-        CreateOrderRequest request = CreateOrderRequest.builder()
-                .customerId(testCustomerId)
-                .lines(List.of(lineRequest))
-                .build();
+        CreateOrderRequest request = createOrderRequest(1L, 5);
 
         OrderDTO created = orderService.createOrder(request);
 
@@ -295,16 +272,7 @@ class OrderServiceIntegrationTest {
     @Test
     void testUpdateOrderStatus_Success() {
         // Given
-        CreateOrderLineRequest lineRequest = CreateOrderLineRequest.builder()
-                .productId(1L)
-                .quantity(5)
-                .unitPrice(new BigDecimal("100.00"))
-                .build();
-
-        CreateOrderRequest createRequest = CreateOrderRequest.builder()
-                .customerId(testCustomerId)
-                .lines(List.of(lineRequest))
-                .build();
+        CreateOrderRequest createRequest = createOrderRequest(1L, 5);
 
         OrderDTO created = orderService.createOrder(createRequest);
 
@@ -324,16 +292,7 @@ class OrderServiceIntegrationTest {
     @Test
     void testCancelOrder_Success() {
         // Given
-        CreateOrderLineRequest lineRequest = CreateOrderLineRequest.builder()
-                .productId(1L)
-                .quantity(5)
-                .unitPrice(new BigDecimal("100.00"))
-                .build();
-
-        CreateOrderRequest request = CreateOrderRequest.builder()
-                .customerId(testCustomerId)
-                .lines(List.of(lineRequest))
-                .build();
+        CreateOrderRequest request = createOrderRequest(1L, 5);
 
         OrderDTO created = orderService.createOrder(request);
 
@@ -354,16 +313,7 @@ class OrderServiceIntegrationTest {
     @Test
     void testDeleteOrder_DraftOnly() {
         // Given
-        CreateOrderLineRequest lineRequest = CreateOrderLineRequest.builder()
-                .productId(1L)
-                .quantity(5)
-                .unitPrice(new BigDecimal("100.00"))
-                .build();
-
-        CreateOrderRequest request = CreateOrderRequest.builder()
-                .customerId(testCustomerId)
-                .lines(List.of(lineRequest))
-                .build();
+        CreateOrderRequest request = createOrderRequest(1L, 5);
 
         OrderDTO created = orderService.createOrder(request);
         long orderCount = orderRepository.count();
@@ -380,16 +330,7 @@ class OrderServiceIntegrationTest {
     @Test
     void testDeleteOrder_FailsIfNotDraft() {
         // Given
-        CreateOrderLineRequest lineRequest = CreateOrderLineRequest.builder()
-                .productId(1L)
-                .quantity(5)
-                .unitPrice(new BigDecimal("100.00"))
-                .build();
-
-        CreateOrderRequest request = CreateOrderRequest.builder()
-                .customerId(testCustomerId)
-                .lines(List.of(lineRequest))
-                .build();
+        CreateOrderRequest request = createOrderRequest(1L, 5);
 
         OrderDTO created = orderService.createOrder(request);
 
@@ -435,16 +376,7 @@ class OrderServiceIntegrationTest {
     @Test
     void testConfirmOrder_OrderStatusChanges() {
         // Given
-        CreateOrderLineRequest lineRequest = CreateOrderLineRequest.builder()
-                .productId(1L)
-                .quantity(5)
-                .unitPrice(new BigDecimal("100.00"))
-                .build();
-
-        CreateOrderRequest request = CreateOrderRequest.builder()
-                .customerId(testCustomerId)
-                .lines(List.of(lineRequest))
-                .build();
+        CreateOrderRequest request = createOrderRequest(1L, 5);
 
         OrderDTO created = orderService.createOrder(request);
         assertThat(created.getStatus()).isEqualTo(OrderStatus.DRAFT);
