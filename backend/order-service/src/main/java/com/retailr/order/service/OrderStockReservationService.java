@@ -14,7 +14,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.RestClientException;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +26,7 @@ public class OrderStockReservationService {
     private final OrderStockReservationRepository orderStockReservationRepository;
     private final RestTemplate restTemplate;
 
-    private static final String CATALOG_SERVICE_URL = "http://localhost:8081/api/v1/products";
+    private static final String CATALOG_SERVICE_URL = "http://localhost:8082/api/v1/products";
 
     @Transactional
     public void reserveStockForOrder(Order order) {
@@ -40,14 +42,13 @@ public class OrderStockReservationService {
                 String stockUrl = CATALOG_SERVICE_URL + "/" + line.getProductId() + "/stock?warehouseId=" + warehouseId;
                 log.debug("Checking stock availability at: {}", stockUrl);
 
-                // This would normally return a ProductStockDTO with availableQuantity
-                // For now, we'll assume the catalog service returns the available quantity
-                // In a real implementation, you'd use a RestTemplate exchange call
-                // Integer availableQuantity = restTemplate.getForObject(stockUrl, ProductStockDTO.class).getAvailableQuantity();
+                org.springframework.http.ResponseEntity<Map> response = restTemplate.getForEntity(stockUrl, Map.class);
+                Map<String, Object> stockData = response.getBody();
 
-                // For demonstration, we assume stock is available
-                // In production, the actual check would happen here
-                Integer availableQuantity = line.getQuantity() + 100; // Mock: assume stock is available
+                Integer availableQuantity = 0;
+                if (stockData != null && stockData.containsKey("availableQuantity")) {
+                    availableQuantity = ((Number) stockData.get("availableQuantity")).intValue();
+                }
 
                 if (availableQuantity < line.getQuantity()) {
                     log.warn("Insufficient stock for product {} in warehouse {}: required={}, available={}",
@@ -70,7 +71,7 @@ public class OrderStockReservationService {
                         order.getId(), line.getProductId(), warehouseId, line.getQuantity());
 
             } catch (RestClientException e) {
-                log.error("Catalog Service unavailable when reserving stock for product {}", line.getProductId(), e);
+                log.warn("Catalog Service unavailable, cannot reserve stock", e);
                 throw new InsufficientStockException(
                         "Unable to check stock availability - Catalog Service is unavailable");
             }
@@ -88,24 +89,21 @@ public class OrderStockReservationService {
                     String releaseUrl = CATALOG_SERVICE_URL + "/" + reservation.getProductId() + "/stock/release";
                     log.debug("Releasing stock at: {}", releaseUrl);
 
-                    // In a real implementation, you'd POST to this endpoint with warehouseId and quantity
-                    // restTemplate.postForObject(releaseUrl, releaseRequest, String.class);
+                    Map<String, Object> releaseRequest = new HashMap<>();
+                    releaseRequest.put("warehouseId", reservation.getWarehouseId());
+                    releaseRequest.put("quantity", reservation.getReservedQuantity());
+                    restTemplate.postForEntity(releaseUrl, releaseRequest, Void.class);
 
                     // Mark reservation as released
                     reservation.setReleasedAt(LocalDateTime.now());
-                    orderStockReservationRepository.save(reservation);
-
-                    log.info("Stock released for order {}: productId={}, warehouseId={}, quantity={}",
-                            orderId, reservation.getProductId(), reservation.getWarehouseId(),
-                            reservation.getReservedQuantity());
+                    log.info("Released stock reservation for order {}", orderId);
 
                 } catch (RestClientException e) {
-                    log.warn("Catalog Service unavailable when releasing stock for order {}", orderId, e);
-                    // Don't throw exception here - partial releases are acceptable
-                    // In production, you might use a message queue for async releases
+                    log.warn("Failed to release stock in Catalog Service for reservation {}", reservation.getId(), e);
                 }
             }
         }
+        orderStockReservationRepository.saveAll(reservations);
     }
 
     @Transactional(readOnly = true)

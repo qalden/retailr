@@ -5,7 +5,7 @@ import com.retailr.order.dto.CustomerDTO;
 import com.retailr.order.dto.UpdateCustomerRequest;
 import com.retailr.order.entity.Customer;
 import com.retailr.order.exception.CustomerNotFoundException;
-import com.retailr.order.exception.OrderException;
+import com.retailr.order.exception.DuplicateEmailException;
 import com.retailr.order.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class CustomerService {
     public CustomerDTO createCustomer(CreateCustomerRequest request) {
         // Check email uniqueness
         if (customerRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new OrderException("Email already in use");
+            throw new DuplicateEmailException("Email already in use");
         }
 
         Customer customer = Customer.builder()
@@ -69,7 +69,7 @@ public class CustomerService {
         // Check email uniqueness if email is being updated
         if (request.getEmail() != null && !request.getEmail().equals(customer.getEmail())) {
             if (customerRepository.findByEmail(request.getEmail()).isPresent()) {
-                throw new OrderException("Email already in use");
+                throw new DuplicateEmailException("Email already in use");
             }
         }
 

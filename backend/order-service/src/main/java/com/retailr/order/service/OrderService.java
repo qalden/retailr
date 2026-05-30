@@ -10,7 +10,9 @@ import com.retailr.order.entity.OrderStatus;
 import com.retailr.order.exception.CustomerNotFoundException;
 import com.retailr.order.exception.OrderNotFoundException;
 import com.retailr.order.repository.CustomerRepository;
+import com.retailr.order.repository.OrderLineRepository;
 import com.retailr.order.repository.OrderRepository;
+import com.retailr.order.repository.OrderStockReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,6 +31,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final OrderLineRepository orderLineRepository;
+    private final OrderStockReservationRepository orderStockReservationRepository;
     private final CustomerRepository customerRepository;
     private final OrderLineService orderLineService;
     private final OrderStockReservationService orderStockReservationService;
@@ -94,22 +98,15 @@ public class OrderService {
     @Transactional(readOnly = true)
     public Page<OrderDTO> getCustomerOrders(Long customerId, Pageable pageable) {
         // Validate customer exists
-        if (!customerRepository.existsById(customerId)) {
-            log.debug("Customer not found with id: {}", customerId);
-            throw new CustomerNotFoundException("Customer not found with id: " + customerId);
-        }
+        customerRepository.findById(customerId)
+                .orElseThrow(() -> {
+                    log.debug("Customer not found with id: {}", customerId);
+                    return new CustomerNotFoundException("Customer not found with id: " + customerId);
+                });
 
         log.debug("Fetching orders for customer id: {} with pagination", customerId);
-        List<Order> allOrders = orderRepository.findByCustomerId(customerId);
-        List<OrderDTO> dtos = allOrders.stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), dtos.size());
-
-        List<OrderDTO> pageContent = dtos.subList(start, end);
-        return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, dtos.size());
+        Page<Order> orders = orderRepository.findByCustomerId(customerId, pageable);
+        return orders.map(this::mapToDTO);
     }
 
     @Transactional
