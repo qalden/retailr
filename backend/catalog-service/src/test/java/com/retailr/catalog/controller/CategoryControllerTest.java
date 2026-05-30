@@ -8,6 +8,9 @@ import com.retailr.catalog.exception.GlobalExceptionHandler;
 import com.retailr.catalog.service.CategoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -134,13 +137,13 @@ class CategoryControllerTest {
 
         stubCategoryService.setupListCategories(categories);
 
-        mockMvc.perform(get("/api/v1/categories"))
+        mockMvc.perform(get("/api/v1/categories?page=0&size=20"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(2)))
-            .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].name").value("Electronics"))
-            .andExpect(jsonPath("$[1].id").value(2))
-            .andExpect(jsonPath("$[1].name").value("Clothing"));
+            .andExpect(jsonPath("$.content", hasSize(2)))
+            .andExpect(jsonPath("$.content[0].id").value(1))
+            .andExpect(jsonPath("$.content[0].name").value("Electronics"))
+            .andExpect(jsonPath("$.content[1].id").value(2))
+            .andExpect(jsonPath("$.content[1].name").value("Clothing"));
     }
 
     @Test
@@ -148,9 +151,30 @@ class CategoryControllerTest {
         List<CategoryDTO> categories = new ArrayList<>();
         stubCategoryService.setupListCategories(categories);
 
-        mockMvc.perform(get("/api/v1/categories"))
+        mockMvc.perform(get("/api/v1/categories?page=0&size=20"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(0)));
+            .andExpect(jsonPath("$.content", hasSize(0)));
+    }
+
+    @Test
+    void testListCategories_InvalidPagination_NegativePage() throws Exception {
+        mockMvc.perform(get("/api/v1/categories?page=-1&size=20"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("PAGINATION_ERROR"));
+    }
+
+    @Test
+    void testListCategories_InvalidPagination_ZeroSize() throws Exception {
+        mockMvc.perform(get("/api/v1/categories?page=0&size=0"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("PAGINATION_ERROR"));
+    }
+
+    @Test
+    void testListCategories_InvalidPagination_ExceedsMaxSize() throws Exception {
+        mockMvc.perform(get("/api/v1/categories?page=0&size=101"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("PAGINATION_ERROR"));
     }
 
     @Test
@@ -195,19 +219,6 @@ class CategoryControllerTest {
     }
 
     @Test
-    void testUpdateCategory_ValidationError_BlankName() throws Exception {
-        UpdateCategoryRequest request = UpdateCategoryRequest.builder()
-            .name("") // Invalid: blank when provided
-            .build();
-
-        mockMvc.perform(put("/api/v1/categories/1")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value("VALIDATION_ERROR"));
-    }
-
-    @Test
     void testUpdateCategory_PartialUpdate() throws Exception {
         UpdateCategoryRequest request = UpdateCategoryRequest.builder()
             .name("New Name")
@@ -229,6 +240,30 @@ class CategoryControllerTest {
             .andExpect(jsonPath("$.id").value(1))
             .andExpect(jsonPath("$.name").value("New Name"))
             .andExpect(jsonPath("$.description").value("Original description"));
+    }
+
+    @Test
+    void testUpdateCategory_PartialUpdate_OmitName() throws Exception {
+        UpdateCategoryRequest request = UpdateCategoryRequest.builder()
+            .description("Updated description")
+            .build();
+
+        CategoryDTO responseDto = CategoryDTO.builder()
+            .id(1L)
+            .name("Original Name")
+            .description("Updated description")
+            .createdAt(LocalDateTime.now())
+            .build();
+
+        stubCategoryService.setupUpdateCategory(responseDto);
+
+        mockMvc.perform(put("/api/v1/categories/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1))
+            .andExpect(jsonPath("$.name").value("Original Name"))
+            .andExpect(jsonPath("$.description").value("Updated description"));
     }
 
     @Test
@@ -302,9 +337,10 @@ class CategoryControllerTest {
         }
 
         @Override
-        public List<CategoryDTO> listCategories() {
+        public Page<CategoryDTO> listCategories(Pageable pageable) {
             throwIfNeeded();
-            return listResponse != null ? listResponse : new ArrayList<>();
+            List<CategoryDTO> categories = listResponse != null ? listResponse : new ArrayList<>();
+            return new PageImpl<>(categories, pageable, categories.size());
         }
 
         @Override

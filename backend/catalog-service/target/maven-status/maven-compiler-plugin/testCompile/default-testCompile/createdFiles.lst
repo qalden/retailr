@@ -9,5 +9,7 @@ com/retailr/catalog/controller/StockControllerTest$StubStockService.class
 com/retailr/catalog/controller/ProductControllerTest.class
 com/retailr/catalog/controller/StockControllerTest.class
 com/retailr/catalog/repository/LowStockAlertRepositoryTest.class
+com/retailr/catalog/controller/CategoryControllerTest$StubCategoryService.class
 com/retailr/catalog/repository/WarehouseRepositoryTest.class
 com/retailr/catalog/service/StockServiceTest.class
+com/retailr/catalog/controller/CategoryControllerTest.class

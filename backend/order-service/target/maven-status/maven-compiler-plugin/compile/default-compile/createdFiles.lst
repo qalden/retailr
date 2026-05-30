@@ -1,0 +1,10 @@
+com/retailr/order/entity/Customer.class
+com/retailr/order/entity/OrderLine$OrderLineBuilder.class
+com/retailr/order/repository/CustomerRepository.class
+com/retailr/order/entity/Order.class
+com/retailr/order/entity/OrderStatus.class
+com/retailr/order/entity/Order$OrderBuilder.class
+com/retailr/order/repository/OrderLineRepository.class
+com/retailr/order/entity/Customer$CustomerBuilder.class
+com/retailr/order/repository/OrderRepository.class
+com/retailr/order/entity/OrderLine.class

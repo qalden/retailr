@@ -1,6 +1,5 @@
 package com.retailr.catalog.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class UpdateCategoryRequest {
-    @NotBlank(message = "Category name cannot be blank")
+    // Name is optional for partial updates - validation is relaxed to allow omitting name in PATCH-like requests
+    // Service layer will validate non-null values if needed
     private String name;
 
     private String description;

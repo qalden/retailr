@@ -3,18 +3,25 @@ package com.retailr.catalog.controller;
 import com.retailr.catalog.dto.CategoryDTO;
 import com.retailr.catalog.dto.CreateCategoryRequest;
 import com.retailr.catalog.dto.UpdateCategoryRequest;
+import com.retailr.catalog.exception.BadPaginationException;
 import com.retailr.catalog.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/categories")
 @Slf4j
 public class CategoryController {
+    private static final int DEFAULT_PAGE = 0;
+    private static final int DEFAULT_PAGE_SIZE = 20;
+    private static final int MAX_PAGE_SIZE = 100;
+
     private final CategoryService categoryService;
 
     public CategoryController(CategoryService categoryService) {
@@ -36,9 +43,13 @@ public class CategoryController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<CategoryDTO>> listCategories() {
-        log.info("Fetching all categories");
-        List<CategoryDTO> categories = categoryService.listCategories();
+    public ResponseEntity<Page<CategoryDTO>> listCategories(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        log.info("Fetching categories page: {}, size: {}", page, size);
+        validatePagination(page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CategoryDTO> categories = categoryService.listCategories(pageable);
         return ResponseEntity.ok(categories);
     }
 
@@ -56,5 +67,17 @@ public class CategoryController {
         log.info("Deleting category with ID: {}", id);
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private void validatePagination(int page, int size) {
+        if (page < 0) {
+            throw new BadPaginationException("Page number cannot be negative");
+        }
+        if (size <= 0) {
+            throw new BadPaginationException("Page size must be greater than 0");
+        }
+        if (size > MAX_PAGE_SIZE) {
+            throw new BadPaginationException("Page size cannot exceed " + MAX_PAGE_SIZE);
+        }
     }
 }

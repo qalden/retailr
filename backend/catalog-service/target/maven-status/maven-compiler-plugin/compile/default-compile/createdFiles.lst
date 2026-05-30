@@ -8,6 +8,7 @@ com/retailr/catalog/dto/LowStockAlertDTO$LowStockAlertDTOBuilder.class
 com/retailr/catalog/dto/SupplierDTO.class
 com/retailr/catalog/controller/ProductController.class
 com/retailr/catalog/exception/GlobalExceptionHandler.class
+com/retailr/catalog/dto/UpdateCategoryRequest$UpdateCategoryRequestBuilder.class
 com/retailr/catalog/entity/Product$ProductBuilder.class
 com/retailr/catalog/repository/LowStockAlertRepository.class
 com/retailr/catalog/entity/Category$CategoryBuilder.class
@@ -21,8 +22,11 @@ com/retailr/catalog/CatalogServiceApplication.class
 com/retailr/catalog/dto/UpdateProductRequest.class
 com/retailr/catalog/dto/CategoryDTO$CategoryDTOBuilder.class
 com/retailr/catalog/dto/CreateSupplierRequest$CreateSupplierRequestBuilder.class
+com/retailr/catalog/dto/CreateCategoryRequest.class
 com/retailr/catalog/entity/Supplier.class
 com/retailr/catalog/entity/StockMovement.class
+com/retailr/catalog/controller/CategoryController.class
+com/retailr/catalog/dto/UpdateCategoryRequest.class
 com/retailr/catalog/repository/WarehouseRepository.class
 com/retailr/catalog/dto/ProductDTO$ProductDTOBuilder.class
 com/retailr/catalog/dto/UpdateSupplierRequest.class
@@ -42,6 +46,7 @@ com/retailr/catalog/repository/StockMovementRepository.class
 com/retailr/catalog/entity/StockItem$StockItemBuilder.class
 com/retailr/catalog/dto/WarehouseDTO$WarehouseDTOBuilder.class
 com/retailr/catalog/exception/StockException.class
+com/retailr/catalog/service/CategoryService.class
 com/retailr/catalog/entity/LowStockAlert$LowStockAlertBuilder.class
 com/retailr/catalog/dto/StockItemDTO.class
 com/retailr/catalog/dto/CategoryDTO.class
@@ -49,7 +54,9 @@ com/retailr/catalog/dto/CreateProductRequest.class
 com/retailr/catalog/dto/ProductDTO.class
 com/retailr/catalog/entity/Warehouse$WarehouseBuilder.class
 com/retailr/catalog/dto/CreateStockMovementRequest$CreateStockMovementRequestBuilder.class
+com/retailr/catalog/dto/CreateCategoryRequest$CreateCategoryRequestBuilder.class
 com/retailr/catalog/entity/Warehouse.class
+com/retailr/catalog/exception/BadPaginationException.class
 com/retailr/catalog/entity/ProductSupplier.class
 com/retailr/catalog/dto/UpdateSupplierRequest$UpdateSupplierRequestBuilder.class
 com/retailr/catalog/repository/ProductRepository.class

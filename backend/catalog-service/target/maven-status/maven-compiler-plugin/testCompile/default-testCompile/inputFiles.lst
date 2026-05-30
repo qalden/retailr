@@ -5,6 +5,7 @@
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/controller/StockControllerTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/service/StockServiceTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/service/ProductServiceTest.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/controller/CategoryControllerTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/repository/WarehouseRepositoryTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/repository/StockItemRepositoryTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/repository/LowStockAlertRepositoryTest.java
