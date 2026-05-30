@@ -271,19 +271,22 @@ class SupplierControllerTest {
         mockMvc.perform(get("/api/v1/suppliers")
             .param("page", "-1")
             .param("size", "20"))
-            .andExpect(status().isNotFound());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("PAGINATION_ERROR"));
 
         // Test zero size
         mockMvc.perform(get("/api/v1/suppliers")
             .param("page", "0")
             .param("size", "0"))
-            .andExpect(status().isNotFound());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("PAGINATION_ERROR"));
 
         // Test size exceeds max
         mockMvc.perform(get("/api/v1/suppliers")
             .param("page", "0")
             .param("size", "101"))
-            .andExpect(status().isNotFound());
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("PAGINATION_ERROR"));
     }
 
     @Test

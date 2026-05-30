@@ -3,6 +3,7 @@ package com.retailr.catalog.controller;
 import com.retailr.catalog.dto.CreateSupplierRequest;
 import com.retailr.catalog.dto.SupplierDTO;
 import com.retailr.catalog.dto.UpdateSupplierRequest;
+import com.retailr.catalog.exception.BadPaginationException;
 import com.retailr.catalog.service.SupplierService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -70,13 +71,13 @@ public class SupplierController {
 
     private void validatePagination(int page, int size) {
         if (page < 0) {
-            throw new IllegalArgumentException("Page number cannot be negative");
+            throw new BadPaginationException("Page number cannot be negative");
         }
         if (size <= 0) {
-            throw new IllegalArgumentException("Page size must be greater than 0");
+            throw new BadPaginationException("Page size must be greater than 0");
         }
         if (size > MAX_PAGE_SIZE) {
-            throw new IllegalArgumentException("Page size cannot exceed 100");
+            throw new BadPaginationException("Page size cannot exceed " + MAX_PAGE_SIZE);
         }
     }
 }

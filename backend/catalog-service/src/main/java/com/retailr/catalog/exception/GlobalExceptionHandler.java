@@ -16,6 +16,18 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(BadPaginationException.class)
+    public ResponseEntity<ErrorResponse> handleBadPaginationException(BadPaginationException ex) {
+        log.error("Bad pagination: {}", ex.getMessage());
+        ErrorResponse error = ErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.BAD_REQUEST.value())
+            .error("PAGINATION_ERROR")
+            .message(ex.getMessage())
+            .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
     @ExceptionHandler(StockException.class)
     public ResponseEntity<ErrorResponse> handleStockException(StockException ex) {
         log.error("Stock exception: {}", ex.getMessage());
