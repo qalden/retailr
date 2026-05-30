@@ -8,6 +8,7 @@ import com.retailr.order.exception.InsufficientStockException;
 import com.retailr.order.repository.OrderStockReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -26,28 +27,36 @@ public class OrderStockReservationService {
     private final OrderStockReservationRepository orderStockReservationRepository;
     private final RestTemplate restTemplate;
 
-    private static final String CATALOG_SERVICE_URL = "http://localhost:8082/api/v1/products";
+    @Value("${catalog-service.url}")
+    private String catalogServiceUrl;
+
+    @Value("${order-service.default-warehouse-id:1}")
+    private Long defaultWarehouseId;
 
     @Transactional
     public void reserveStockForOrder(Order order) {
         List<OrderLine> orderLines = order.getOrderLines();
 
         for (OrderLine line : orderLines) {
-            // For now, we'll use a default warehouse ID of 1
-            // In a real scenario, this would be determined by business logic
-            Long warehouseId = 1L;
+            // Use default warehouse ID
+            Long warehouseId = defaultWarehouseId;
 
             try {
                 // Call Catalog Service to check stock availability
-                String stockUrl = CATALOG_SERVICE_URL + "/" + line.getProductId() + "/stock?warehouseId=" + warehouseId;
+                String stockUrl = catalogServiceUrl + "/" + line.getProductId() + "/stock?warehouseId=" + warehouseId;
                 log.debug("Checking stock availability at: {}", stockUrl);
 
                 org.springframework.http.ResponseEntity<Map> response = restTemplate.getForEntity(stockUrl, Map.class);
                 Map<String, Object> stockData = response.getBody();
 
                 Integer availableQuantity = 0;
-                if (stockData != null && stockData.containsKey("availableQuantity")) {
-                    availableQuantity = ((Number) stockData.get("availableQuantity")).intValue();
+                if (stockData != null) {
+                    Object quantityObj = stockData.get("availableQuantity");
+                    if (quantityObj == null) {
+                        log.error("Catalog Service response missing availableQuantity for product {}", line.getProductId());
+                        throw new InsufficientStockException("Invalid Catalog Service response: missing availableQuantity");
+                    }
+                    availableQuantity = ((Number) quantityObj).intValue();
                 }
 
                 if (availableQuantity < line.getQuantity()) {
@@ -71,7 +80,7 @@ public class OrderStockReservationService {
                         order.getId(), line.getProductId(), warehouseId, line.getQuantity());
 
             } catch (RestClientException e) {
-                log.warn("Catalog Service unavailable, cannot reserve stock", e);
+                log.error("Catalog Service unavailable, cannot reserve stock", e);
                 throw new InsufficientStockException(
                         "Unable to check stock availability - Catalog Service is unavailable");
             }
@@ -86,7 +95,7 @@ public class OrderStockReservationService {
             if (reservation.getReleasedAt() == null) {
                 try {
                     // Call Catalog Service to release stock
-                    String releaseUrl = CATALOG_SERVICE_URL + "/" + reservation.getProductId() + "/stock/release";
+                    String releaseUrl = catalogServiceUrl + "/" + reservation.getProductId() + "/stock/release";
                     log.debug("Releasing stock at: {}", releaseUrl);
 
                     Map<String, Object> releaseRequest = new HashMap<>();
@@ -99,7 +108,8 @@ public class OrderStockReservationService {
                     log.info("Released stock reservation for order {}", orderId);
 
                 } catch (RestClientException e) {
-                    log.warn("Failed to release stock in Catalog Service for reservation {}", reservation.getId(), e);
+                    log.error("Failed to release stock in Catalog Service for reservation {}", reservation.getId(), e);
+                    throw new InsufficientStockException("Failed to release stock: " + e.getMessage());
                 }
             }
         }

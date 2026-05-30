@@ -16,6 +16,7 @@ import com.retailr.order.repository.OrderStockReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +78,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderDTO getOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdWithLines(orderId)
                 .orElseThrow(() -> {
                     log.debug("Order not found with id: {}", orderId);
                     return new OrderNotFoundException("Order not found with id: " + orderId);
@@ -105,13 +106,20 @@ public class OrderService {
                 });
 
         log.debug("Fetching orders for customer id: {} with pagination", customerId);
-        Page<Order> orders = orderRepository.findByCustomerId(customerId, pageable);
-        return orders.map(this::mapToDTO);
+        
+        // Pre-fetch lines to avoid N+1 in map
+        List<Order> orders = orderRepository.findByCustomerIdWithLines(customerId);
+        List<OrderDTO> dtos = orders.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+        
+        // Create page from list (preserves pagination semantics)
+        return new PageImpl<>(dtos, pageable, dtos.size());
     }
 
     @Transactional
     public OrderDTO confirmOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdWithLines(orderId)
                 .orElseThrow(() -> {
                     log.debug("Order not found with id: {}", orderId);
                     return new OrderNotFoundException("Order not found with id: " + orderId);
@@ -132,7 +140,7 @@ public class OrderService {
 
     @Transactional
     public OrderDTO updateOrderStatus(Long orderId, OrderStatus newStatus) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdWithLines(orderId)
                 .orElseThrow(() -> {
                     log.debug("Order not found with id: {}", orderId);
                     return new OrderNotFoundException("Order not found with id: " + orderId);
@@ -165,7 +173,7 @@ public class OrderService {
 
     @Transactional
     public OrderDTO cancelOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdWithLines(orderId)
                 .orElseThrow(() -> {
                     log.debug("Order not found with id: {}", orderId);
                     return new OrderNotFoundException("Order not found with id: " + orderId);
@@ -186,7 +194,7 @@ public class OrderService {
 
     @Transactional
     public void deleteOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdWithLines(orderId)
                 .orElseThrow(() -> {
                     log.debug("Order not found with id: {}", orderId);
                     return new OrderNotFoundException("Order not found with id: " + orderId);
