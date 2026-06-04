@@ -65,7 +65,7 @@ axiosClient.interceptors.response.use(
           data?.message ?? 'Your session has expired. Please log in again.',
           'UNAUTHORIZED',
           status,
-          data?.validationErrors,
+          data?.details as Record<string, string> | undefined,
           error,
         ),
       );
@@ -77,7 +77,7 @@ axiosClient.interceptors.response.use(
           data?.message ?? 'You do not have permission to perform this action.',
           'FORBIDDEN',
           status,
-          data?.validationErrors,
+          data?.details as Record<string, string> | undefined,
           error,
         ),
       );
@@ -89,7 +89,7 @@ axiosClient.interceptors.response.use(
           data?.message ?? 'An internal server error occurred. Please try again later.',
           'INTERNAL_SERVER_ERROR',
           status,
-          data?.validationErrors,
+          data?.details as Record<string, string> | undefined,
           error,
         ),
       );
@@ -101,7 +101,7 @@ axiosClient.interceptors.response.use(
           data?.message ?? 'Validation failed.',
           'VALIDATION_ERROR',
           status,
-          data?.validationErrors,
+          data?.details as Record<string, string> | undefined,
           error,
         ),
       );
@@ -119,7 +119,7 @@ axiosClient.interceptors.response.use(
           data?.message ?? 'A conflict occurred.',
           'CONFLICT',
           status,
-          data?.validationErrors,
+          data?.details as Record<string, string> | undefined,
           error,
         ),
       );
@@ -130,7 +130,7 @@ axiosClient.interceptors.response.use(
         data?.message ?? 'An unexpected error occurred.',
         'UNKNOWN',
         status,
-        data?.validationErrors,
+        data?.details as Record<string, string> | undefined,
         error,
       ),
     );

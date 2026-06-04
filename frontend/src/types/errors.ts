@@ -40,7 +40,7 @@ export class AppError extends Error {
       apiError.message,
       code,
       apiError.status,
-      apiError.validationErrors,
+      apiError.details as Record<string, string> | undefined,
     );
   }
 }

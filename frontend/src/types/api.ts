@@ -135,6 +135,7 @@ export interface StockMovementDTO {
   movementType: StockMovementType;
   referenceType: string | null;
   referenceId: number | null;
+  createdByUserId?: number | null;
   createdAt: string;
 }
 
@@ -257,10 +258,9 @@ export interface PageRequest {
 // ─── Error ────────────────────────────────────────────────────────────────
 
 export interface ApiErrorResponse {
+  timestamp: string;
   status: number;
   error: string;
   message: string;
-  timestamp: string;
-  path?: string;
-  validationErrors?: Record<string, string>;
+  details?: Record<string, unknown>;
 }

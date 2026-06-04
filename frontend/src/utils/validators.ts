@@ -137,7 +137,7 @@ export type SupplierFormSchema = z.infer<typeof supplierFormSchema>;
 
 // ─── Stock Adjustment ─────────────────────────────────────────────────────
 
-export const stockAdjustmentSchema = z.object({
+export const stockFormSchema = z.object({
   stockItemId: z.number().int().positive('Stock item is required'),
   quantityDelta: z.number().int().refine((n) => n !== 0, {
     message: 'Quantity delta cannot be zero',
@@ -147,4 +147,4 @@ export const stockAdjustmentSchema = z.object({
   referenceId: z.number().int().positive().optional(),
 });
 
-export type StockAdjustmentSchema = z.infer<typeof stockAdjustmentSchema>;
+export type StockFormSchema = z.infer<typeof stockFormSchema>;
