@@ -60,7 +60,7 @@
 .input:focus {
   outline: none;
   border-color: var(--color-primary-500);
-  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1);
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1); /* #3b82f6 at 10% opacity */
 }
 
 .input:disabled {
@@ -106,7 +106,7 @@
 }
 
 .submit:active:not(:disabled) {
-  background-color: #1d3a8a;
+  background-color: var(--color-primary-700);
 }
 
 .submit:disabled {

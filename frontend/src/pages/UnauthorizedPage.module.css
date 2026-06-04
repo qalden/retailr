@@ -63,7 +63,7 @@
 }
 
 .link:active {
-  background-color: #1d3a8a;
+  background-color: var(--color-primary-700);
 }
 
 /* ─── Icon ──────────────────────────────────────────────────────────────── */
