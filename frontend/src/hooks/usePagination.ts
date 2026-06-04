@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 interface UsePaginationReturn {
   pageNumber: number;
@@ -27,44 +27,44 @@ export const usePagination = (
     return Math.ceil(totalItems / pageSize);
   }, [totalItems, pageSize]);
 
-  const canGoNext = useMemo(() => {
-    return pageNumber < totalPages;
-  }, [pageNumber, totalPages]);
+  const canGoNext = useMemo(
+    () => pageNumber < totalPages,
+    [pageNumber, totalPages]
+  );
 
-  const canGoPrev = useMemo(() => {
-    return pageNumber > 1;
-  }, [pageNumber]);
+  const canGoPrev = useMemo(
+    () => pageNumber > 1,
+    [pageNumber]
+  );
 
-  const goToPage = (page: number): void => {
+  const goToPage = useCallback((page: number): void => {
     const clampedPage = Math.max(1, Math.min(page, totalPages));
     setPageNumber(clampedPage);
-  };
+  }, [totalPages]);
 
-  const nextPage = (): void => {
+  const nextPage = useCallback((): void => {
     if (canGoNext) {
       setPageNumber((prev) => prev + 1);
     }
-  };
+  }, [canGoNext]);
 
-  const prevPage = (): void => {
+  const prevPage = useCallback((): void => {
     if (canGoPrev) {
       setPageNumber((prev) => prev - 1);
     }
-  };
+  }, [canGoPrev]);
 
-  return useMemo(
-    () => ({
-      pageNumber,
-      pageSize,
-      goToPage,
-      nextPage,
-      prevPage,
-      canGoNext,
-      canGoPrev,
-      totalPages,
-    }),
-    [pageNumber, pageSize, canGoNext, canGoPrev, totalPages]
-  );
+  // Return object directly - memoized values inside are stable for dependency tracking
+  return {
+    pageNumber,
+    pageSize,
+    goToPage,
+    nextPage,
+    prevPage,
+    canGoNext,
+    canGoPrev,
+    totalPages,
+  };
 };
 
 export default usePagination;
