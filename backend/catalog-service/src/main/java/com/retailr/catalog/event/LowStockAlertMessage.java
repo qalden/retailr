@@ -1,6 +1,7 @@
 package com.retailr.catalog.event;
 
 import lombok.*;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,5 +13,7 @@ public class LowStockAlertMessage {
     private String productName;
     private Long warehouseId;
     private Integer threshold;
+
+    @NotNull(message = "Timestamp is required")
     private LocalDateTime timestamp;
 }

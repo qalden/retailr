@@ -335,7 +335,7 @@ class StockControllerTest {
         private RuntimeException exceptionToThrow;
 
         public StubStockService() {
-            super(null, null, null);
+            super(null, null, null, null);
         }
 
         void setupGetStockItem(Long id, StockItemDTO dto) {
