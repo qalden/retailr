@@ -1,0 +1,36 @@
+import { configureStore } from '@reduxjs/toolkit';
+import authReducer from './slices/authSlice';
+import productsReducer from './slices/productsSlice';
+import ordersReducer from './slices/ordersSlice';
+import customersReducer from './slices/customersSlice';
+import suppliersReducer from './slices/suppliersSlice';
+import stockReducer from './slices/stockSlice';
+import uiReducer from './slices/uiSlice';
+
+// ─── Store ────────────────────────────────────────────────────────────────
+
+export const store = configureStore({
+  reducer: {
+    auth: authReducer,
+    products: productsReducer,
+    orders: ordersReducer,
+    customers: customersReducer,
+    suppliers: suppliersReducer,
+    stock: stockReducer,
+    ui: uiReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // AppError instances are technically non-serializable but are contained in
+        // action payloads that we handle immediately — suppress warnings for them.
+        ignoredActionPaths: ['payload.originalError'],
+      },
+    }),
+  devTools: import.meta.env.DEV,
+});
+
+// ─── Inferred Types ───────────────────────────────────────────────────────
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
