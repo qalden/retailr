@@ -81,16 +81,16 @@
 .deleteButton {
   background-color: var(--color-error-light);
   color: var(--color-error);
-  border-color: #fecaca;
+  border-color: var(--color-error-light);
 }
 
 .deleteButton:hover {
-  background-color: #fecaca;
-  border-color: #f87171;
+  background-color: var(--color-error-light);
+  border-color: var(--color-error);
 }
 
 .deleteButton:active {
-  background-color: #f87171;
+  background-color: var(--color-error);
 }
 
 .errorContainer {
