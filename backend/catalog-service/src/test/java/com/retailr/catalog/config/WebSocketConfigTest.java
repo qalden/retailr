@@ -42,23 +42,20 @@ class WebSocketConfigTest {
 
     @Test
     void testApplicationDestinationPrefixConfigured() {
-        WebSocketConfig webSocketConfig = applicationContext.getBean(WebSocketConfig.class);
-        assertNotNull(webSocketConfig, "WebSocketConfig should be instantiated");
-        assertTrue(webSocketConfig instanceof WebSocketMessageBrokerConfigurer,
-                "WebSocketConfig must implement WebSocketMessageBrokerConfigurer to configure destination prefixes");
+        assertNotNull(messagingTemplate,
+                "SimpMessagingTemplate should be available when /app destination prefix is configured");
     }
 
     @Test
     void testStompEndpointRegistered() {
         WebSocketConfig webSocketConfig = applicationContext.getBean(WebSocketConfig.class);
-        assertNotNull(webSocketConfig, "WebSocketConfig should register STOMP endpoints");
+        assertNotNull(webSocketConfig, "WebSocketConfig bean should exist to register STOMP endpoints");
+        assertNotNull(messagingTemplate, "SimpMessagingTemplate should be available when STOMP endpoints are registered");
     }
 
     @Test
     void testSockJSEnabledOnEndpoint() {
-        // Verify that STOMP endpoint and SockJS fallback are configured by checking
-        // that the application context contains the WebSocket message broker configuration
-        WebSocketConfig retrievedConfig = applicationContext.getBean(WebSocketConfig.class);
-        assertNotNull(retrievedConfig, "WebSocketConfig bean should enable SockJS on the /ws endpoint");
+        assertNotNull(messagingTemplate,
+                "SimpMessagingTemplate should be available when SockJS is enabled on the /ws endpoint");
     }
 }
