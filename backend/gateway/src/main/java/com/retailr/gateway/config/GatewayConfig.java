@@ -1,42 +1,85 @@
 package com.retailr.gateway.config;
 
+import com.retailr.gateway.filter.RateLimitFilter;
 import com.retailr.gateway.security.JwtAuthenticationFilter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 
+/**
+ * Gateway configuration for routing requests to backend microservices.
+ *
+ * Route structure:
+ * 1. Auth routes (/api/v1/auth/**) - PUBLIC, no JWT required
+ * 2. Catalog routes (/api/v1/products/**, /api/v1/suppliers/**, /api/v1/categories/**) - PUBLIC, no JWT
+ * 3. Stock routes (/api/v1/stock/**) - PROTECTED, JWT required
+ * 4. Order routes (/api/v1/orders/**, /api/v1/customers/**) - PROTECTED, JWT required
+ *
+ * All routes:
+ * - Strip /api/v1 prefix before forwarding to backend services
+ * - Enforce rate limiting
+ * - Protected routes validate JWT token
+ */
+@Slf4j
 @Configuration
 public class GatewayConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RateLimitFilter rateLimitFilter;
+
+    public GatewayConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                        RateLimitFilter rateLimitFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.rateLimitFilter = rateLimitFilter;
+    }
 
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes()
-            // Auth Service routes (no JWT required for /login and /refresh)
-            .route("auth-login", r -> r
-                .path("/api/auth/login")
-                .and().method(HttpMethod.POST)
-                .uri("lb://auth-service"))
-            .route("auth-refresh", r -> r
-                .path("/api/auth/refresh")
-                .and().method(HttpMethod.POST)
-                .uri("lb://auth-service"))
-            // All other auth endpoints require JWT
+            // ========== PUBLIC ROUTES (No JWT required) ==========
+
+            // Auth Service - Public endpoints (login, refresh, register)
             .route("auth-service", r -> r
-                .path("/api/auth/**")
-                .filters(f -> f.filter(new JwtAuthenticationFilter()))
-                .uri("lb://auth-service"))
-            // Catalog Service routes (require JWT)
-            .route("catalog-service", r -> r
-                .path("/api/catalog/**", "/api/products/**", "/api/stock/**", "/api/suppliers/**")
-                .filters(f -> f.filter(new JwtAuthenticationFilter()))
-                .uri("lb://catalog-service"))
-            // Order Service routes (require JWT)
+                .path("/api/v1/auth/**")
+                .filters(f -> f
+                        .stripPrefix(1)
+                        .filter(rateLimitFilter.apply(new RateLimitFilter.Config()))
+                )
+                .uri("http://localhost:8081"))
+
+            // Catalog Service - Public endpoints (products, suppliers, categories)
+            .route("catalog-public", r -> r
+                .path("/api/v1/products/**", "/api/v1/suppliers/**", "/api/v1/categories/**")
+                .filters(f -> f
+                        .stripPrefix(1)
+                        .filter(rateLimitFilter.apply(new RateLimitFilter.Config()))
+                )
+                .uri("http://localhost:8082"))
+
+            // ========== PROTECTED ROUTES (JWT required) ==========
+
+            // Catalog Service - Protected endpoint (stock management)
+            .route("stock-service", r -> r
+                .path("/api/v1/stock/**")
+                .filters(f -> f
+                        .stripPrefix(1)
+                        .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))
+                        .filter(rateLimitFilter.apply(new RateLimitFilter.Config()))
+                )
+                .uri("http://localhost:8082"))
+
+            // Order Service - All endpoints require JWT (orders, customers)
             .route("order-service", r -> r
-                .path("/api/orders/**", "/api/customers/**")
-                .filters(f -> f.filter(new JwtAuthenticationFilter()))
-                .uri("lb://order-service"))
+                .path("/api/v1/orders/**", "/api/v1/customers/**")
+                .filters(f -> f
+                        .stripPrefix(1)
+                        .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))
+                        .filter(rateLimitFilter.apply(new RateLimitFilter.Config()))
+                )
+                .uri("http://localhost:8083"))
+
             .build();
     }
 }
