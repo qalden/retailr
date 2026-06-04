@@ -6,6 +6,16 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+/**
+ * Configures STOMP over WebSocket for real-time catalog updates.
+ *
+ * Registers a /ws STOMP endpoint with SockJS fallback for browsers without
+ * native WebSocket support. Uses SimpleBroker for topic-based message publishing
+ * to subscribed clients.
+ *
+ * CORS is set to allowedOriginPatterns("*") for development. This should be
+ * restricted to specific origins in production.
+ */
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
@@ -21,7 +31,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Register the WebSocket endpoint
-        registry.addEndpoint("/ws/stock")
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 }
