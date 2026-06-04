@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import type { LoginFormSchema } from '@/utils/validators';
 import { loginFormSchema } from '@/utils/validators';
+import styles from './LoginPage.module.css';
 
 const LoginPage: React.FC = () => {
   const { login, isLoading } = useAuth();
@@ -44,13 +45,14 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <main style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12, width: 320 }}>
-        <h1>Retailr Login</h1>
-        {serverError && <p role="alert" style={{ color: 'red' }}>{serverError}</p>}
-        <label>
+    <main className={styles.container}>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <h1 className={styles.title}>Retailr Login</h1>
+        {serverError && <p className={styles.serverError} role="alert">{serverError}</p>}
+        <label className={styles.label}>
           Email
           <input
+            className={styles.input}
             type="email"
             name="email"
             value={values.email}
@@ -58,11 +60,12 @@ const LoginPage: React.FC = () => {
             autoComplete="email"
             required
           />
-          {errors.email && <span style={{ color: 'red', fontSize: 12 }}>{errors.email}</span>}
+          {errors.email && <span className={styles.error}>{errors.email}</span>}
         </label>
-        <label>
+        <label className={styles.label}>
           Password
           <input
+            className={styles.input}
             type="password"
             name="password"
             value={values.password}
@@ -70,9 +73,9 @@ const LoginPage: React.FC = () => {
             autoComplete="current-password"
             required
           />
-          {errors.password && <span style={{ color: 'red', fontSize: 12 }}>{errors.password}</span>}
+          {errors.password && <span className={styles.error}>{errors.password}</span>}
         </label>
-        <button type="submit" disabled={isLoading}>
+        <button type="submit" className={styles.submit} disabled={isLoading}>
           {isLoading ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
