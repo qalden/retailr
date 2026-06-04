@@ -1,0 +1,18 @@
+.skeleton {
+  display: inline-block;
+  background-color: var(--color-border);
+  border-radius: var(--radius-md);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-color: var(--color-border);
+  }
+  50% {
+    background-color: var(--color-background);
+  }
+  100% {
+    background-color: var(--color-border);
+  }
+}

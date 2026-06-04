@@ -1,0 +1,125 @@
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.headerRow {
+  background-color: var(--color-background);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.headerCell {
+  padding: var(--spacing-md);
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.bodyRow {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-fast);
+}
+
+.bodyRow:hover {
+  background-color: var(--color-background);
+}
+
+.bodyRow:last-child {
+  border-bottom: none;
+}
+
+.bodyCell {
+  padding: var(--spacing-md);
+  color: var(--color-text);
+  vertical-align: middle;
+}
+
+.actionButtons {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.editButton,
+.deleteButton {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.editButton {
+  background-color: var(--color-primary-50);
+  color: var(--color-primary);
+  border-color: var(--color-primary-200);
+}
+
+.editButton:hover {
+  background-color: var(--color-primary-100);
+  border-color: var(--color-primary-300);
+}
+
+.editButton:active {
+  background-color: var(--color-primary-200);
+}
+
+.deleteButton {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  border-color: #fecaca;
+}
+
+.deleteButton:hover {
+  background-color: #fecaca;
+  border-color: #f87171;
+}
+
+.deleteButton:active {
+  background-color: #f87171;
+}
+
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  background-color: var(--color-error-light);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-lg);
+  min-height: 300px;
+}
+
+.errorMessage {
+  font-size: var(--font-size-base);
+  color: var(--color-error);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .headerCell,
+  .bodyCell {
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-xs);
+  }
+
+  .editButton,
+  .deleteButton {
+    padding: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+  }
+}
