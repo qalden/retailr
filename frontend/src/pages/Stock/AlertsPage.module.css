@@ -1,0 +1,219 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background-color: var(--color-background);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.subtitle {
+  margin: var(--spacing-xs) 0 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.skeletonContainer {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.errorContainer {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background-color: var(--color-error-light);
+  border-left: 4px solid var(--color-error);
+  border-radius: var(--radius-md);
+}
+
+.errorIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-error);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.errorTitle {
+  font-weight: 600;
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  margin-bottom: 4px;
+}
+
+.errorMessage {
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+}
+
+.tableContainer {
+  position: relative;
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.loadingOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-lg);
+  z-index: 10;
+  gap: var(--spacing-md);
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.quantityValue {
+  font-weight: 600;
+  color: var(--color-warning);
+}
+
+.thresholdValue {
+  color: var(--color-text-muted);
+}
+
+.acknowledgeButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 6px 12px;
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  white-space: nowrap;
+}
+
+.acknowledgeButton:hover:not(:disabled) {
+  background-color: #2463eb;
+}
+
+.acknowledgeButton:active:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.acknowledgeButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.acknowledgedButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 6px 12px;
+  background-color: var(--color-success);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.checkIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 48px;
+  height: 48px;
+  color: var(--color-success);
+  opacity: 0.5;
+}
+
+.emptyTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.emptyMessage {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .pageContainer {
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .tableContainer {
+    padding: var(--spacing-sm);
+    overflow-x: auto;
+  }
+
+  .acknowledgeButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,29 @@
+.badge {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statusDraft {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.statusConfirmed {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.statusFulfilled {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.statusCancelled {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
