@@ -1,6 +1,5 @@
 package com.retailr.catalog.controller;
 
-import com.retailr.catalog.dto.CategoryDTO;
 import com.retailr.catalog.dto.CreateProductRequest;
 import com.retailr.catalog.dto.ProductDTO;
 import com.retailr.catalog.dto.UpdateProductRequest;
@@ -99,20 +98,6 @@ public class ProductController {
         log.info("Deleting product with ID: {}", id);
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/categories")
-    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
-        log.info("Fetching all categories");
-        List<CategoryDTO> categories = productService.getAllCategories();
-        return ResponseEntity.ok(categories);
-    }
-
-    @GetMapping("/categories/{id}")
-    public ResponseEntity<CategoryDTO> getCategory(@PathVariable Long id) {
-        log.info("Fetching category with ID: {}", id);
-        CategoryDTO category = productService.getCategory(id);
-        return ResponseEntity.ok(category);
     }
 
     private void validatePagination(int page, int size) {
