@@ -7,28 +7,35 @@ import com.retailr.catalog.dto.LowStockAlertDTO;
 import com.retailr.catalog.entity.StockItem;
 import com.retailr.catalog.entity.StockMovement;
 import com.retailr.catalog.entity.LowStockAlert;
+import com.retailr.catalog.event.StockUpdateEvent;
 import com.retailr.catalog.exception.StockException;
 import com.retailr.catalog.repository.StockItemRepository;
 import com.retailr.catalog.repository.StockMovementRepository;
 import com.retailr.catalog.repository.LowStockAlertRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@Slf4j
 public class StockService {
     private final StockItemRepository stockItemRepository;
     private final StockMovementRepository stockMovementRepository;
     private final LowStockAlertRepository lowStockAlertRepository;
+    private final RealTimeService realTimeService;
 
     public StockService(StockItemRepository stockItemRepository,
                         StockMovementRepository stockMovementRepository,
-                        LowStockAlertRepository lowStockAlertRepository) {
+                        LowStockAlertRepository lowStockAlertRepository,
+                        RealTimeService realTimeService) {
         this.stockItemRepository = stockItemRepository;
         this.stockMovementRepository = stockMovementRepository;
         this.lowStockAlertRepository = lowStockAlertRepository;
+        this.realTimeService = realTimeService;
     }
 
     public StockItemDTO getStockItem(Long id) {
@@ -98,8 +105,29 @@ public class StockService {
             throw new StockException("Insufficient stock available. Available: " + available + ", Requested: " + quantity);
         }
 
+        Integer previousQuantity = item.getQuantity();
         item.setReservedQuantity(item.getReservedQuantity() + quantity);
-        stockItemRepository.save(item);
+        StockItem saved = stockItemRepository.save(item);
+
+        // Publish stock update event via WebSocket (non-blocking)
+        try {
+            StockUpdateEvent event = StockUpdateEvent.builder()
+                .productId(saved.getProduct().getId())
+                .warehouseId(saved.getWarehouse().getId())
+                .previousQuantity(previousQuantity)
+                .newQuantity(saved.getQuantity())
+                .sku(saved.getProduct().getSku())
+                .warehouse(saved.getWarehouse().getName())
+                .reservedQuantity(saved.getReservedQuantity())
+                .alert(saved.getQuantity() <= saved.getProduct().getLowStockThreshold())
+                .movementType(StockUpdateEvent.MovementType.ORDER_CONFIRMATION)
+                .timestamp(LocalDateTime.now())
+                .build();
+            realTimeService.publishStockUpdate(event);
+        } catch (Exception e) {
+            log.warn("Failed to publish stock update for reservation: {}", e.getMessage());
+            // Stock reservation already succeeded in DB, so don't re-throw
+        }
     }
 
     public void releaseStock(Long stockItemId, Integer quantity) {
@@ -111,8 +139,29 @@ public class StockService {
             throw new StockException("Cannot release more than reserved. Reserved: " + currentReserved + ", Requested: " + quantity);
         }
 
+        Integer previousQuantity = item.getQuantity();
         item.setReservedQuantity(currentReserved - quantity);
-        stockItemRepository.save(item);
+        StockItem saved = stockItemRepository.save(item);
+
+        // Publish stock update event via WebSocket (non-blocking)
+        try {
+            StockUpdateEvent event = StockUpdateEvent.builder()
+                .productId(saved.getProduct().getId())
+                .warehouseId(saved.getWarehouse().getId())
+                .previousQuantity(previousQuantity)
+                .newQuantity(saved.getQuantity())
+                .sku(saved.getProduct().getSku())
+                .warehouse(saved.getWarehouse().getName())
+                .reservedQuantity(saved.getReservedQuantity())
+                .alert(saved.getQuantity() <= saved.getProduct().getLowStockThreshold())
+                .movementType(StockUpdateEvent.MovementType.RETURN)
+                .timestamp(LocalDateTime.now())
+                .build();
+            realTimeService.publishStockUpdate(event);
+        } catch (Exception e) {
+            log.warn("Failed to publish stock update for release: {}", e.getMessage());
+            // Stock release already succeeded in DB, so don't re-throw
+        }
     }
 
     private StockItemDTO toDTO(StockItem item) {
