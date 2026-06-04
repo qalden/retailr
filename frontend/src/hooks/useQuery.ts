@@ -1,5 +1,5 @@
 import { useEffect, useRef, useMemo } from 'react';
-import { useAppDispatch } from '@/store';
+import { useAppDispatch, useAppSelector } from '@/store';
 import type { RootState, AppDispatch } from '@/store';
 import type { AsyncThunkAction } from '@reduxjs/toolkit';
 
@@ -27,7 +27,10 @@ type PaginatedThunk<T> = (
  * @template T - The type of data being fetched
  * @param thunk - Redux async thunk function that accepts a page number
  * @param page - Current page number (1-based)
- * @param onSuccess - Optional callback fired when data loads successfully
+ * @param dataSelector - Redux selector function to extract data from state
+ * @param loadingSelector - Redux selector function to extract loading state
+ * @param errorSelector - Redux selector function to extract error state
+ * @param onSuccess - Optional callback fired when data loads successfully with the loaded data
  * @returns Object containing data, loading state, error state, and current page
  *
  * @example
@@ -35,87 +38,75 @@ type PaginatedThunk<T> = (
  * const { data: products, loading, error, currentPage } = useQuery(
  *   fetchProducts,
  *   pageNumber,
- *   () => console.log("Products loaded")
+ *   selectAllProducts,
+ *   selectProductsLoading,
+ *   selectProductsError,
+ *   (data) => console.log("Products loaded:", data)
  * );
  * ```
  */
 export const useQuery = <T,>(
   thunk: PaginatedThunk<T>,
   page: number,
-  onSuccess?: () => void
+  dataSelector: (state: RootState) => T | null,
+  loadingSelector: (state: RootState) => boolean,
+  errorSelector: (state: RootState) => string | null,
+  onSuccess?: (data: T) => void
 ): UseQueryReturn<T> => {
   const dispatch = useAppDispatch();
-  const prevPageRef = useRef<number>(page);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const onSuccessRef = useRef<((data: T) => void) | undefined>(onSuccess);
 
-  // Create a selector dynamically based on the thunk type to get loading/error/data
-  // This assumes the component using this hook manages the selection of the right state slice
-  // For now, we'll return a pattern that works with Redux async thunks
+  // Select data, loading, and error from Redux state
+  const data = useAppSelector(dataSelector);
+  const loading = useAppSelector(loadingSelector);
+  const error = useAppSelector(errorSelector);
+
+  // Update the ref when onSuccess changes to avoid stale closure
+  useEffect(() => {
+    onSuccessRef.current = onSuccess;
+  }, [onSuccess]);
 
   // Fetch data when page changes
   useEffect(() => {
-    // Cancel previous request if page changed
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    // Create new abort controller for this request
-    abortControllerRef.current = new AbortController();
-
     // Dispatch the thunk with the current page
     const dispatchPromise = dispatch(thunk(page));
 
     // Call onSuccess if provided and dispatch succeeds
-    if (onSuccess) {
-      dispatchPromise.then(
-        (result) => {
-          // Check if request wasn't aborted
-          if (!abortControllerRef.current?.signal.aborted) {
-            // Only call onSuccess if action was fulfilled (not rejected)
-            if (!result.payload && result.meta?.requestStatus === 'fulfilled') {
-              onSuccess();
-            } else if (result.payload) {
-              onSuccess();
-            }
-          }
+    dispatchPromise.then(
+      (result) => {
+        // Only call onSuccess if action was fulfilled with payload
+        if (result.meta?.requestStatus === 'fulfilled' && result.payload && onSuccessRef.current) {
+          onSuccessRef.current(result.payload as T);
         }
-      ).catch(() => {
-        // Silently handle abort errors
-      });
-    }
-
-    prevPageRef.current = page;
-
-    // Cleanup on unmount
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
       }
-    };
-  }, [page, thunk, dispatch, onSuccess]);
+    ).catch(() => {
+      // Silently handle errors - they're already in Redux state
+    });
+  }, [page, thunk, dispatch]);
 
   // Memoize return value to prevent unnecessary re-renders
-  // Note: Components using this hook should define their own selectors
-  // to extract data, loading, and error from the Redux state
   const result = useMemo(() => ({
-    data: null as T | null,
-    loading: false,
-    error: null as string | null,
+    data: data ?? null,
+    loading,
+    error,
     currentPage: page,
-  }), [page]);
+  }), [data, loading, error, page]);
 
   return result;
 };
 
 /**
- * Advanced usage: For components that need more granular control,
- * combine this hook with Redux selectors:
+ * Basic usage: Combine this hook with Redux selectors:
  *
  * ```typescript
- * const { currentPage } = useQuery(fetchProducts, pageNumber);
- * const data = useAppSelector(selectAllProducts);
- * const loading = useAppSelector(selectProductsLoading);
- * const error = useAppSelector(selectProductsError);
+ * const { data: products, loading, error, currentPage } = useQuery(
+ *   fetchProducts,
+ *   pageNumber,
+ *   selectAllProducts,
+ *   selectProductsLoading,
+ *   selectProductsError,
+ *   (data) => console.log("Products loaded:", data)
+ * );
  * ```
  */
 
