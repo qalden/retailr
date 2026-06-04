@@ -9,9 +9,12 @@ import { MainLayout } from '@/pages/Layout/MainLayout';
 
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
-const ProductsPage = lazy(() => import('@/pages/ProductsPage'));
+const ProductListPage = lazy(() => import('@/pages/Products/ProductListPage'));
+const ProductDetailPage = lazy(() => import('@/pages/Products/ProductDetailPage'));
+const ProductCreatePage = lazy(() => import('@/pages/Products/ProductCreatePage'));
 const OrdersPage = lazy(() => import('@/pages/OrdersPage'));
-const CustomersPage = lazy(() => import('@/pages/CustomersPage'));
+const CustomerListPage = lazy(() => import('@/pages/Customers/CustomerListPage'));
+const CustomerCreatePage = lazy(() => import('@/pages/Customers/CustomerCreatePage'));
 const StockPage = lazy(() => import('@/pages/StockPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 const UnauthorizedPage = lazy(() => import('@/pages/UnauthorizedPage'));
@@ -57,9 +60,23 @@ export const AppRoutes: React.FC = () => (
         path="/products"
         element={
           <ProtectedRoute>
-            <MainLayout>
-              <ProductsPage />
-            </MainLayout>
+            <ProductListPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/products/create"
+        element={
+          <ProtectedRoute>
+            <ProductCreatePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/products/:id"
+        element={
+          <ProtectedRoute>
+            <ProductDetailPage />
           </ProtectedRoute>
         }
       />
@@ -79,11 +96,19 @@ export const AppRoutes: React.FC = () => (
         path="/customers"
         element={
           <ProtectedRoute>
-            <MainLayout>
-              <RoleRoute allowedRoles={['ROLE_ADMIN', 'ROLE_SALES_OFFICER']}>
-                <CustomersPage />
-              </RoleRoute>
-            </MainLayout>
+            <RoleRoute allowedRoles={['ROLE_ADMIN', 'ROLE_SALES_OFFICER']}>
+              <CustomerListPage />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customers/create"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRoles={['ROLE_ADMIN', 'ROLE_SALES_OFFICER']}>
+              <CustomerCreatePage />
+            </RoleRoute>
           </ProtectedRoute>
         }
       />
