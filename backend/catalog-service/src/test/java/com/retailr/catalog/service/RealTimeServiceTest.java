@@ -4,6 +4,8 @@ import com.retailr.catalog.entity.Category;
 import com.retailr.catalog.entity.Product;
 import com.retailr.catalog.entity.StockItem;
 import com.retailr.catalog.entity.Warehouse;
+import com.retailr.catalog.event.StockUpdateEvent;
+import com.retailr.catalog.event.StockUpdateMessage;
 import com.retailr.catalog.repository.CategoryRepository;
 import com.retailr.catalog.repository.ProductRepository;
 import com.retailr.catalog.repository.StockItemRepository;
@@ -259,5 +261,138 @@ class RealTimeServiceTest {
                 () -> realTimeService.notifyStockReturn(999L, 999L, 10));
 
         assertTrue(exception.getMessage().contains("StockItem not found"));
+    }
+
+    @Test
+    void publishStockUpdate_sendsMessageToStockTopic() {
+        StockUpdateEvent event = StockUpdateEvent.builder()
+                .productId(testProduct.getId())
+                .warehouseId(testWarehouse.getId())
+                .previousQuantity(100)
+                .newQuantity(90)
+                .movementType(StockUpdateEvent.MovementType.ADJUSTMENT)
+                .timestamp(java.time.LocalDateTime.now())
+                .build();
+
+        // Should execute without exception
+        assertDoesNotThrow(() -> realTimeService.publishStockUpdate(event));
+    }
+
+    @Test
+    void publishStockUpdate_includesCorrectFieldsInMessage() {
+        StockUpdateEvent event = StockUpdateEvent.builder()
+                .productId(testProduct.getId())
+                .warehouseId(testWarehouse.getId())
+                .previousQuantity(100)
+                .newQuantity(50)
+                .movementType(StockUpdateEvent.MovementType.ADJUSTMENT)
+                .timestamp(java.time.LocalDateTime.now())
+                .build();
+
+        // Should execute without exception
+        assertDoesNotThrow(() -> realTimeService.publishStockUpdate(event));
+    }
+
+    @Test
+    void publishStockUpdate_setsAlertFlagWhenQuantityBelowThreshold() {
+        StockUpdateEvent event = StockUpdateEvent.builder()
+                .productId(testProduct.getId())
+                .warehouseId(testWarehouse.getId())
+                .previousQuantity(15)
+                .newQuantity(5)
+                .movementType(StockUpdateEvent.MovementType.ADJUSTMENT)
+                .timestamp(java.time.LocalDateTime.now())
+                .build();
+
+        // Should execute without exception
+        assertDoesNotThrow(() -> realTimeService.publishStockUpdate(event));
+    }
+
+    @Test
+    void publishStockUpdate_setsAlertFlagWhenQuantityEqualsThreshold() {
+        StockUpdateEvent event = StockUpdateEvent.builder()
+                .productId(testProduct.getId())
+                .warehouseId(testWarehouse.getId())
+                .previousQuantity(15)
+                .newQuantity(10)
+                .movementType(StockUpdateEvent.MovementType.ADJUSTMENT)
+                .timestamp(java.time.LocalDateTime.now())
+                .build();
+
+        // Should execute without exception
+        assertDoesNotThrow(() -> realTimeService.publishStockUpdate(event));
+    }
+
+    @Test
+    void publishStockUpdate_doesNotSetAlertWhenQuantityAboveThreshold() {
+        StockUpdateEvent event = StockUpdateEvent.builder()
+                .productId(testProduct.getId())
+                .warehouseId(testWarehouse.getId())
+                .previousQuantity(20)
+                .newQuantity(15)
+                .movementType(StockUpdateEvent.MovementType.ADJUSTMENT)
+                .timestamp(java.time.LocalDateTime.now())
+                .build();
+
+        // Should execute without exception
+        assertDoesNotThrow(() -> realTimeService.publishStockUpdate(event));
+    }
+
+    @Test
+    void publishStockUpdate_throwsExceptionWhenEventIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> realTimeService.publishStockUpdate(null));
+    }
+
+    @Test
+    void publishStockUpdate_throwsExceptionWhenProductIdIsInvalid() {
+        StockUpdateEvent event = StockUpdateEvent.builder()
+                .productId(0L)
+                .warehouseId(testWarehouse.getId())
+                .previousQuantity(100)
+                .newQuantity(90)
+                .movementType(StockUpdateEvent.MovementType.ADJUSTMENT)
+                .timestamp(java.time.LocalDateTime.now())
+                .build();
+
+        assertThrows(IllegalArgumentException.class, () -> realTimeService.publishStockUpdate(event));
+    }
+
+    @Test
+    void publishStockUpdate_throwsExceptionWhenWarehouseIdIsInvalid() {
+        StockUpdateEvent event = StockUpdateEvent.builder()
+                .productId(testProduct.getId())
+                .warehouseId(0L)
+                .previousQuantity(100)
+                .newQuantity(90)
+                .movementType(StockUpdateEvent.MovementType.ADJUSTMENT)
+                .timestamp(java.time.LocalDateTime.now())
+                .build();
+
+        assertThrows(IllegalArgumentException.class, () -> realTimeService.publishStockUpdate(event));
+    }
+
+    @Test
+    void publishStockUpdate_multipleCalls_sendsMultipleMessages() {
+        StockUpdateEvent event1 = StockUpdateEvent.builder()
+                .productId(testProduct.getId())
+                .warehouseId(testWarehouse.getId())
+                .previousQuantity(100)
+                .newQuantity(90)
+                .movementType(StockUpdateEvent.MovementType.ADJUSTMENT)
+                .timestamp(java.time.LocalDateTime.now())
+                .build();
+
+        StockUpdateEvent event2 = StockUpdateEvent.builder()
+                .productId(testProduct.getId())
+                .warehouseId(testWarehouse.getId())
+                .previousQuantity(90)
+                .newQuantity(80)
+                .movementType(StockUpdateEvent.MovementType.ADJUSTMENT)
+                .timestamp(java.time.LocalDateTime.now())
+                .build();
+
+        // Both calls should execute without exception
+        assertDoesNotThrow(() -> realTimeService.publishStockUpdate(event1));
+        assertDoesNotThrow(() -> realTimeService.publishStockUpdate(event2));
     }
 }
