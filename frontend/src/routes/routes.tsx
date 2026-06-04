@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import RoleRoute from './RoleRoute';
+import { MainLayout } from '@/pages/Layout/MainLayout';
 
 // ─── Lazy-loaded Pages ────────────────────────────────────────────────────
 // Pages are stub components until feature pages are built.
@@ -46,7 +47,9 @@ export const AppRoutes: React.FC = () => (
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <DashboardPage />
+            <MainLayout>
+              <DashboardPage />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -54,7 +57,9 @@ export const AppRoutes: React.FC = () => (
         path="/products"
         element={
           <ProtectedRoute>
-            <ProductsPage />
+            <MainLayout>
+              <ProductsPage />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -62,7 +67,9 @@ export const AppRoutes: React.FC = () => (
         path="/orders"
         element={
           <ProtectedRoute>
-            <OrdersPage />
+            <MainLayout>
+              <OrdersPage />
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -72,9 +79,11 @@ export const AppRoutes: React.FC = () => (
         path="/customers"
         element={
           <ProtectedRoute>
-            <RoleRoute allowedRoles={['ROLE_ADMIN', 'ROLE_SALES_OFFICER']}>
-              <CustomersPage />
-            </RoleRoute>
+            <MainLayout>
+              <RoleRoute allowedRoles={['ROLE_ADMIN', 'ROLE_SALES_OFFICER']}>
+                <CustomersPage />
+              </RoleRoute>
+            </MainLayout>
           </ProtectedRoute>
         }
       />
@@ -82,9 +91,11 @@ export const AppRoutes: React.FC = () => (
         path="/stock"
         element={
           <ProtectedRoute>
-            <RoleRoute allowedRoles={['ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER']}>
-              <StockPage />
-            </RoleRoute>
+            <MainLayout>
+              <RoleRoute allowedRoles={['ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER']}>
+                <StockPage />
+              </RoleRoute>
+            </MainLayout>
           </ProtectedRoute>
         }
       />

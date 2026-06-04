@@ -1,0 +1,26 @@
+.layoutContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--color-background);
+}
+
+.layoutBody {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: var(--spacing-md);
+  }
+}
