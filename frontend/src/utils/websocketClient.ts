@@ -73,6 +73,8 @@ class WebSocketClientImpl {
   private connectCallback?: () => void;
   private disconnectCallback?: () => void;
   private errorHandlerCallback?: (error: Error) => void;
+  private lastToken = '';
+  private reconnectTimeoutId?: ReturnType<typeof setTimeout>;
 
   /**
    * Get the WebSocket URL from environment or use default
@@ -136,6 +138,7 @@ class WebSocketClientImpl {
         return;
       }
 
+      this.lastToken = token;
       this.setStatus(WebSocketStatus.CONNECTING);
 
       const wsUrl = this.getWebSocketUrl();
@@ -145,7 +148,7 @@ class WebSocketClientImpl {
         connectHeaders: {
           Authorization: `Bearer ${token}`,
         },
-        reconnectDelay: 5000, // stompjs internal reconnect delay
+        reconnectDelay: 0, // Disable stompjs internal reconnect - we handle it manually
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
         onConnect: () => {
@@ -168,7 +171,10 @@ class WebSocketClientImpl {
             console.error('Error in onErrorCallback:', cbError);
           }
           this.notifyError(error);
-          reject(error);
+          // Only reject if still connecting (promise not yet settled)
+          if (!this.stompClient?.connected) {
+            reject(error);
+          }
         },
         onWebSocketClose: () => {
           this.handleDisconnect();
@@ -224,6 +230,20 @@ class WebSocketClientImpl {
       console.log(
         `WebSocket disconnected. Reconnecting in ${Math.round(delay)}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`
       );
+
+      // Clear any existing reconnect timeout
+      if (this.reconnectTimeoutId) {
+        clearTimeout(this.reconnectTimeoutId);
+      }
+
+      // Schedule reconnect with actual delay
+      this.reconnectTimeoutId = setTimeout(async () => {
+        try {
+          await this.connect(this.lastToken);
+        } catch (error) {
+          this.notifyError(error as Error);
+        }
+      }, delay);
     } else {
       this.setStatus(WebSocketStatus.DISCONNECTED);
       const error = new Error('WebSocket failed to reconnect after maximum attempts');
@@ -238,8 +258,14 @@ class WebSocketClientImpl {
     this.reconnectAttempts = 0;
     this.setStatus(WebSocketStatus.DISCONNECTED);
 
-    // Unsubscribe from all topics
-    this.subscriptions.forEach((_subscriptionId, topic) => {
+    // Clear any pending reconnect timeout
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = undefined;
+    }
+
+    // Unsubscribe from all topics (safe iteration by creating array copy)
+    Array.from(this.subscriptions.keys()).forEach(topic => {
       this.unsubscribe(topic);
     });
 
@@ -392,15 +418,23 @@ class WebSocketClientImpl {
   /**
    * Register a callback for successful connection
    */
-  onConnect(callback: () => void): void {
+  onConnect(callback: () => void): () => void {
     this.connectCallback = callback;
+    // Return unsubscribe function
+    return () => {
+      this.connectCallback = undefined;
+    };
   }
 
   /**
    * Register a callback for disconnection
    */
-  onDisconnect(callback: () => void): void {
+  onDisconnect(callback: () => void): () => void {
     this.disconnectCallback = callback;
+    // Return unsubscribe function
+    return () => {
+      this.disconnectCallback = undefined;
+    };
   }
 
   /**

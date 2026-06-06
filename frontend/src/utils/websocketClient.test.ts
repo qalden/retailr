@@ -32,8 +32,29 @@ vi.mock('@stomp/stompjs', () => ({
   }),
 }));
 
+/**
+ * Reset WebSocketClient singleton state for test isolation
+ */
+export function resetWebSocketClient() {
+  // Access private properties through type assertion for testing
+  const client = wsClient as any;
+  client['statusCallbacks']?.clear?.() || (client['statusCallbacks'] = []);
+  client['errorCallbacks']?.clear?.() || (client['errorCallbacks'] = []);
+  client['subscriptions']?.clear?.() || (client['subscriptions'] = new Map());
+  client['reconnectAttempts'] = 0;
+  client['connectCallback'] = undefined;
+  client['disconnectCallback'] = undefined;
+  client['errorHandlerCallback'] = undefined;
+  client['lastToken'] = '';
+  if (client['reconnectTimeoutId']) {
+    clearTimeout(client['reconnectTimeoutId']);
+    client['reconnectTimeoutId'] = undefined;
+  }
+}
+
 describe('WebSocketClient', () => {
   beforeEach(() => {
+    resetWebSocketClient();
     vi.clearAllMocks();
   });
 
