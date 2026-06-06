@@ -63,6 +63,7 @@ export interface Supplier {
 
 export interface StockItem {
   id: number;
+  sku: string;
   productId: number;
   warehouseId: number;
   quantity: number;

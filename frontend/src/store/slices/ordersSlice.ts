@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import type { Order, Pagination } from '@/types/domain';
 import type { RootState } from '@/store';
+import type { OrderUpdateMessage } from '@/utils/websocketTypes';
 import { axiosClient } from '@/api/axiosClient';
 import type { CreateOrderRequest } from '@/types/api';
 
@@ -154,6 +155,68 @@ const ordersSlice = createSlice({
       }
       if (state.selectedOrder?.id === action.payload.id) {
         state.selectedOrder = action.payload;
+      }
+    },
+    updateOrderFromWebSocket(state, action: PayloadAction<OrderUpdateMessage>) {
+      const message = action.payload;
+
+      // Validate message structure and required fields
+      if (!message || typeof message.orderNumber !== 'string' || !message.orderNumber.trim()) {
+        console.warn('Invalid order update message structure, skipping:', message);
+        return;
+      }
+
+      // Validate order number is not empty
+      if (!message.customer || typeof message.customer !== 'string' || !message.customer.trim()) {
+        console.warn('Invalid customer name in order message:', message.customer);
+        return;
+      }
+
+      // Validate status is a valid value
+      if (typeof message.status !== 'string' || !message.status.trim()) {
+        console.warn('Invalid status in order message:', message.status);
+        return;
+      }
+
+      // Validate total amount
+      if (typeof message.total !== 'number' || message.total < 0) {
+        console.warn('Invalid total amount in order message:', message.total);
+        return;
+      }
+
+      // Find order by matching orderNumber
+      const existingIndex = state.items.findIndex((o) => o.orderNumber === message.orderNumber);
+
+      if (existingIndex !== -1) {
+        // Merge update into existing order
+        state.items[existingIndex].status = message.status as Order['status'];
+        state.items[existingIndex].totalAmount = message.total;
+        state.items[existingIndex].updatedAt = new Date(message.timestamp).toISOString();
+      } else {
+        // Create minimal new order from message
+        const newOrder: Order = {
+          id: 0, // Placeholder - will be assigned by backend on sync
+          orderNumber: message.orderNumber,
+          customer: {
+            id: 0,
+            name: message.customer,
+            email: '',
+            phone: null,
+            address: null,
+            city: null,
+            postalCode: null,
+            createdAt: new Date().toISOString(),
+          },
+          status: message.status as Order['status'],
+          totalAmount: message.total,
+          createdAt: new Date().toISOString(),
+          confirmedAt: null,
+          fulfilledAt: null,
+          cancelledAt: null,
+          updatedAt: new Date(message.timestamp).toISOString(),
+          lines: [],
+        };
+        state.items.push(newOrder);
       }
     },
     removeOrder(state, action: PayloadAction<number>) {
@@ -316,6 +379,7 @@ export const {
   setSelectedOrder,
   addOrder,
   replaceOrder,
+  updateOrderFromWebSocket,
   removeOrder,
   setLoading,
   setError,

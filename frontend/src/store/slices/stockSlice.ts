@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import type { StockItem, LowStockAlert } from '@/types/domain';
 import type { RootState } from '@/store';
+import type { StockUpdateMessage } from '@/utils/websocketTypes';
 import { axiosClient } from '@/api/axiosClient';
 
 // ─── Async Thunks ─────────────────────────────────────────────────────────
@@ -101,6 +102,65 @@ const stockSlice = createSlice({
         state.items.push(action.payload);
       }
     },
+    updateStockFromWebSocket(state, action: PayloadAction<StockUpdateMessage>) {
+      const message = action.payload;
+
+      // Validate message structure and required fields
+      if (!message || typeof message.warehouse !== 'string' || typeof message.sku !== 'string') {
+        console.warn('Invalid stock update message structure, skipping:', message);
+        return;
+      }
+
+      // Validate non-empty strings
+      if (!message.warehouse.trim() || !message.sku.trim()) {
+        console.warn('Invalid stock update message: empty warehouse or sku, skipping:', message);
+        return;
+      }
+
+      // Validate quantity values
+      if (typeof message.quantity !== 'number' || message.quantity < 0) {
+        console.warn('Invalid quantity in stock message:', message.quantity);
+        return;
+      }
+
+      if (typeof message.reserved !== 'number' || message.reserved < 0) {
+        console.warn('Invalid reserved quantity in stock message:', message.reserved);
+        return;
+      }
+
+      // Parse warehouse ID and validate
+      const warehouseId = parseInt(message.warehouse, 10);
+      if (isNaN(warehouseId) || warehouseId <= 0) {
+        console.warn('Invalid warehouse ID:', message.warehouse);
+        return;
+      }
+
+      // Find stock item by matching BOTH warehouse AND sku
+      const existingIndex = state.items.findIndex(
+        (item) => item.warehouseId === warehouseId && item.sku === message.sku
+      );
+
+      if (existingIndex !== -1) {
+        // Merge update into existing item
+        state.items[existingIndex].quantity = message.quantity;
+        state.items[existingIndex].reservedQuantity = message.reserved;
+        state.items[existingIndex].availableQuantity = message.quantity - message.reserved;
+        state.items[existingIndex].updatedAt = new Date(message.timestamp).toISOString();
+      } else {
+        // Create new stock item from message
+        const newItem: StockItem = {
+          id: 0, // Placeholder - will be assigned by backend on sync
+          sku: message.sku,
+          productId: 0, // Placeholder - will be looked up later
+          warehouseId: warehouseId,
+          quantity: message.quantity,
+          reservedQuantity: message.reserved,
+          availableQuantity: message.quantity - message.reserved,
+          updatedAt: new Date(message.timestamp).toISOString(),
+        };
+        state.items.push(newItem);
+      }
+    },
     setAlerts(state, action: PayloadAction<LowStockAlert[]>) {
       state.alerts = action.payload;
     },
@@ -199,7 +259,7 @@ const stockSlice = createSlice({
 
 // ─── Actions ──────────────────────────────────────────────────────────────
 
-export const { setStockItems, updateStockItem, setAlerts, addAlert, setLoading, setError, clear } = stockSlice.actions;
+export const { setStockItems, updateStockItem, updateStockFromWebSocket, setAlerts, addAlert, setLoading, setError, clear } = stockSlice.actions;
 
 // ─── Selectors ────────────────────────────────────────────────────────────
 
