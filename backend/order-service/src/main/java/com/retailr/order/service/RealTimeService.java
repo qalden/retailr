@@ -15,6 +15,9 @@ public class RealTimeService {
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     public void publishOrderUpdate(OrderUpdateEvent event) {
+        if (event == null) {
+            throw new IllegalArgumentException("OrderUpdateEvent cannot be null");
+        }
         OrderUpdateMessage message = OrderUpdateMessage.builder()
                 .orderNumber(event.getOrderNumber())
                 .status(event.getStatus().toString())
@@ -26,5 +29,7 @@ public class RealTimeService {
         log.debug("Publishing order update: orderNumber={}, status={}",
                 message.getOrderNumber(), message.getStatus());
         simpMessagingTemplate.convertAndSend("/topic/order-updates", message);
+        log.info("Published order update to /topic/order-updates: orderNumber={}, status={}",
+                 message.getOrderNumber(), message.getStatus());
     }
 }
