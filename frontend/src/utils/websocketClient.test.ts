@@ -50,6 +50,8 @@ export function resetWebSocketClient() {
     clearTimeout(client['reconnectTimeoutId']);
     client['reconnectTimeoutId'] = undefined;
   }
+  client['currentStatus'] = WebSocketStatus.DISCONNECTED;
+  client['stompClient'] = null;
 }
 
 describe('WebSocketClient', () => {
