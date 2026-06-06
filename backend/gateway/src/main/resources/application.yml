@@ -32,8 +32,9 @@ spring:
       routes: []
 
 # JWT Configuration
+# Note: jwt.secret MUST be set via environment variable or external configuration
+# Do not hardcode secrets in version-controlled files
 jwt:
-  secret: my-test-secret-key-that-is-long-enough-for-hs256-algorithm
   expiration: 3600000  # 1 hour in milliseconds
 
 # Resilience4j Rate Limiter Configuration

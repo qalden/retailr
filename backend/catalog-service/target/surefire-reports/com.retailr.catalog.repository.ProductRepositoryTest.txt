@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.retailr.catalog.repository.ProductRepositoryTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.151 s -- in com.retailr.catalog.repository.ProductRepositoryTest

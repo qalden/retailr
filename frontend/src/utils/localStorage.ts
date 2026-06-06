@@ -1,4 +1,5 @@
 import type { User } from '@/types/domain';
+import { UserSchema } from '@/utils/validators';
 
 // ─── Keys ─────────────────────────────────────────────────────────────────
 
@@ -62,11 +63,13 @@ export function clearRefreshToken(): void {
 // ─── User ─────────────────────────────────────────────────────────────────
 
 export function getUser(): User | null {
+  const raw = localStorage.getItem(USER_KEY);
+  if (!raw) return null;
   try {
-    const raw = localStorage.getItem(USER_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as User;
+    const parsed: unknown = JSON.parse(raw);
+    return UserSchema.parse(parsed);
   } catch {
+    clearUser();
     return null;
   }
 }

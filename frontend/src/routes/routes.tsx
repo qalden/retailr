@@ -15,7 +15,8 @@ const ProductCreatePage = lazy(() => import('@/pages/Products/ProductCreatePage'
 const OrdersPage = lazy(() => import('@/pages/OrdersPage'));
 const CustomerListPage = lazy(() => import('@/pages/Customers/CustomerListPage'));
 const CustomerCreatePage = lazy(() => import('@/pages/Customers/CustomerCreatePage'));
-const StockPage = lazy(() => import('@/pages/StockPage'));
+const StockListPage = lazy(() => import('@/pages/Stock/StockListPage'));
+const StockAlertsPage = lazy(() => import('@/pages/Stock/AlertsPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 const UnauthorizedPage = lazy(() => import('@/pages/UnauthorizedPage'));
 
@@ -116,11 +117,19 @@ export const AppRoutes: React.FC = () => (
         path="/stock"
         element={
           <ProtectedRoute>
-            <MainLayout>
-              <RoleRoute allowedRoles={['ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER']}>
-                <StockPage />
-              </RoleRoute>
-            </MainLayout>
+            <RoleRoute allowedRoles={['ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER']}>
+              <StockListPage />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/stock/alerts"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowedRoles={['ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER']}>
+              <StockAlertsPage />
+            </RoleRoute>
           </ProtectedRoute>
         }
       />

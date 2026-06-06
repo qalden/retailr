@@ -1,11 +1,13 @@
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/controller/ProductControllerTest.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/service/RealTimeServiceTest.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/repository/StockMovementRepositoryTest.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/config/WebSocketConfigTest.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/controller/StockControllerTest.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/service/ProductServiceTest.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/repository/LowStockAlertRepositoryTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/repository/ProductRepositoryTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/controller/SupplierControllerTest.java
-/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/repository/StockMovementRepositoryTest.java
-/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/controller/StockControllerTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/service/StockServiceTest.java
-/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/service/ProductServiceTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/controller/CategoryControllerTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/repository/WarehouseRepositoryTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/repository/StockItemRepositoryTest.java
-/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/test/java/com/retailr/catalog/repository/LowStockAlertRepositoryTest.java

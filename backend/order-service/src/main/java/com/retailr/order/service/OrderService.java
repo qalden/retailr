@@ -7,6 +7,7 @@ import com.retailr.order.entity.Customer;
 import com.retailr.order.entity.Order;
 import com.retailr.order.entity.OrderLine;
 import com.retailr.order.entity.OrderStatus;
+import com.retailr.order.event.OrderUpdateEvent;
 import com.retailr.order.exception.CustomerNotFoundException;
 import com.retailr.order.exception.OrderNotFoundException;
 import com.retailr.order.repository.CustomerRepository;
@@ -37,6 +38,7 @@ public class OrderService {
     private final CustomerRepository customerRepository;
     private final OrderLineService orderLineService;
     private final OrderStockReservationService orderStockReservationService;
+    private final RealTimeService realTimeService;
 
     @Transactional
     public OrderDTO createOrder(CreateOrderRequest request) {
@@ -72,6 +74,18 @@ public class OrderService {
         Order finalOrder = orderRepository.save(savedOrder);
         log.info("Order created with id: {}, orderNumber: {}, customerId: {}",
                 finalOrder.getId(), finalOrder.getOrderNumber(), customer.getId());
+
+        // Publish real-time update
+        try {
+            realTimeService.publishOrderUpdate(OrderUpdateEvent.builder()
+                    .orderNumber(finalOrder.getOrderNumber())
+                    .status(finalOrder.getStatus())
+                    .total(finalOrder.getTotalAmount())
+                    .customerName(customer.getName())
+                    .build());
+        } catch (Exception e) {
+            log.warn("Failed to publish order update: {}", e.getMessage());
+        }
 
         return mapToDTO(finalOrder);
     }
@@ -135,6 +149,18 @@ public class OrderService {
         Order confirmedOrder = orderRepository.save(order);
         log.info("Order confirmed with id: {}, orderNumber: {}", confirmedOrder.getId(), confirmedOrder.getOrderNumber());
 
+        // Publish real-time update
+        try {
+            realTimeService.publishOrderUpdate(OrderUpdateEvent.builder()
+                    .orderNumber(confirmedOrder.getOrderNumber())
+                    .status(confirmedOrder.getStatus())
+                    .total(confirmedOrder.getTotalAmount())
+                    .customerName(confirmedOrder.getCustomer().getName())
+                    .build());
+        } catch (Exception e) {
+            log.warn("Failed to publish order update: {}", e.getMessage());
+        }
+
         return mapToDTO(confirmedOrder);
     }
 
@@ -168,6 +194,18 @@ public class OrderService {
         log.info("Order status updated: orderId={}, orderNumber={}, newStatus={}",
                 updatedOrder.getId(), updatedOrder.getOrderNumber(), newStatus);
 
+        // Publish real-time update
+        try {
+            realTimeService.publishOrderUpdate(OrderUpdateEvent.builder()
+                    .orderNumber(updatedOrder.getOrderNumber())
+                    .status(updatedOrder.getStatus())
+                    .total(updatedOrder.getTotalAmount())
+                    .customerName(updatedOrder.getCustomer().getName())
+                    .build());
+        } catch (Exception e) {
+            log.warn("Failed to publish order update: {}", e.getMessage());
+        }
+
         return mapToDTO(updatedOrder);
     }
 
@@ -188,6 +226,18 @@ public class OrderService {
 
         Order cancelledOrder = orderRepository.save(order);
         log.info("Order cancelled with id: {}, orderNumber: {}", cancelledOrder.getId(), cancelledOrder.getOrderNumber());
+
+        // Publish real-time update
+        try {
+            realTimeService.publishOrderUpdate(OrderUpdateEvent.builder()
+                    .orderNumber(cancelledOrder.getOrderNumber())
+                    .status(cancelledOrder.getStatus())
+                    .total(cancelledOrder.getTotalAmount())
+                    .customerName(cancelledOrder.getCustomer().getName())
+                    .build());
+        } catch (Exception e) {
+            log.warn("Failed to publish order update: {}", e.getMessage());
+        }
 
         return mapToDTO(cancelledOrder);
     }

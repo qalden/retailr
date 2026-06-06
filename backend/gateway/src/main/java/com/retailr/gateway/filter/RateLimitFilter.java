@@ -34,18 +34,23 @@ public class RateLimitFilter extends AbstractGatewayFilterFactory<RateLimitFilte
     private static final int USER_LIMIT_PER_MINUTE = 100;
     private static final Duration REFRESH_PERIOD = Duration.ofMinutes(1);
 
+    // Issue 2: Initialize global limiter as static field to prevent race conditions
+    private static final RateLimiterConfig GLOBAL_CONFIG = RateLimiterConfig.custom()
+            .limitRefreshPeriod(REFRESH_PERIOD)
+            .limitForPeriod(GLOBAL_LIMIT_PER_MINUTE)
+            .timeoutDuration(Duration.ofSeconds(1))
+            .build();
+
     private final RateLimiterRegistry rateLimiterRegistry;
+    private final RateLimiter globalLimiter;
 
     public RateLimitFilter() {
         super(Config.class);
         // Initialize Resilience4j RateLimiterRegistry with default configuration
-        this.rateLimiterRegistry = RateLimiterRegistry.of(
-                RateLimiterConfig.custom()
-                        .limitRefreshPeriod(REFRESH_PERIOD)
-                        .limitForPeriod(GLOBAL_LIMIT_PER_MINUTE)
-                        .timeoutDuration(Duration.ofSeconds(1))
-                        .build()
-        );
+        this.rateLimiterRegistry = RateLimiterRegistry.of(GLOBAL_CONFIG);
+
+        // Issue 2: Create global limiter once in constructor to prevent race condition
+        this.globalLimiter = rateLimiterRegistry.rateLimiter(GLOBAL_RATE_LIMITER, GLOBAL_CONFIG);
 
         // Add event consumer for logging
         rateLimiterRegistry.getEventPublisher()
@@ -57,8 +62,8 @@ public class RateLimitFilter extends AbstractGatewayFilterFactory<RateLimitFilte
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             // Check global rate limit first
-            RateLimiter globalRateLimiter = rateLimiterRegistry.rateLimiter(GLOBAL_RATE_LIMITER);
-            if (!globalRateLimiter.acquirePermission()) {
+            // Issue 2: Use instance variable instead of fetching from registry each time
+            if (!globalLimiter.acquirePermission()) {
                 log.warn("Global rate limit exceeded for request: {}",
                         exchange.getRequest().getPath());
                 exchange.getResponse().setStatusCode(HttpStatus.TOO_MANY_REQUESTS);

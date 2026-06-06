@@ -1,3 +1,7 @@
+com/retailr/gateway/filter/RateLimitFilter$Config.class
+com/retailr/gateway/filter/RateLimitFilter.class
 com/retailr/gateway/config/GatewayConfig.class
 com/retailr/gateway/security/JwtAuthenticationFilter.class
 com/retailr/gateway/GatewayApplication.class
+com/retailr/gateway/security/JwtAuthenticationFilter$Config.class
+com/retailr/gateway/exception/GatewayException.class

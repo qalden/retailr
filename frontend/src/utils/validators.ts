@@ -1,5 +1,17 @@
 import { z } from 'zod';
 
+// ─── Domain Schema ────────────────────────────────────────────────────────
+
+export const UserSchema = z.object({
+  id: z.number(),
+  email: z.string().email(),
+  name: z.string(),
+  roles: z.array(
+    z.enum(['ROLE_ADMIN', 'ROLE_INVENTORY_MANAGER', 'ROLE_SALES_OFFICER', 'ROLE_VIEWER']),
+  ),
+  createdAt: z.string(),
+});
+
 // ─── Auth ─────────────────────────────────────────────────────────────────
 
 export const loginFormSchema = z.object({
@@ -58,6 +70,7 @@ export type CategoryFormSchema = z.infer<typeof categoryFormSchema>;
 // ─── Order ────────────────────────────────────────────────────────────────
 
 const orderLineSchema = z.object({
+  id: z.string().uuid(),
   productId: z.number().int().positive('Product is required'),
   quantity: z
     .number({ required_error: 'Quantity is required' })

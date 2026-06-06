@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useMemo, type ReactNode } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { createContext, useCallback, useEffect, useMemo, type ReactNode } from 'react';
+import { useSelector } from 'react-redux';
 import {
   setCredentials,
   clearAuth as clearAuthAction,
@@ -10,7 +10,7 @@ import {
   selectIsAuthenticated,
   selectAuthLoading,
 } from '@/store/slices/authSlice';
-import type { AppDispatch } from '@/store';
+import { useAppDispatch } from '@/store';
 import type { User } from '@/types/domain';
 import type { LoginRequest } from '@/types/api';
 import { persistAuth, clearAuth as clearLocalStorage, getToken, getUser } from '@/utils/localStorage';
@@ -40,7 +40,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const user = useSelector(selectCurrentUser);
   const token = useSelector(selectToken);
@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [dispatch]);
 
-  const login = async (credentials: LoginRequest): Promise<void> => {
+  const login = useCallback(async (credentials: LoginRequest): Promise<void> => {
     dispatch(setLoading(true));
     dispatch(setError(null));
     try {
@@ -90,17 +90,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       dispatch(setError(err instanceof Error ? err.message : 'Login failed'));
       throw err;
     }
-  };
+  }, [dispatch]);
 
-  const logout = (): void => {
+  const logout = useCallback((): void => {
     clearLocalStorage();
     dispatch(clearAuthAction());
-  };
+  }, [dispatch]);
 
   const value = useMemo<AuthContextValue>(
     () => ({ user, token, isAuthenticated, isLoading, login, logout }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user, token, isAuthenticated, isLoading],
+    [user, token, isAuthenticated, isLoading, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

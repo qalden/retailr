@@ -396,7 +396,7 @@ class OrderControllerTest {
         private RuntimeException exceptionToThrow;
 
         StubOrderService() {
-            super(null, null, null, null, null, null);
+            super(null, null, null, null, null, null, null);
         }
 
         void setupCreateOrder(OrderDTO dto) {

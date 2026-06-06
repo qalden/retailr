@@ -10,6 +10,7 @@ com/retailr/catalog/controller/ProductController.class
 com/retailr/catalog/exception/GlobalExceptionHandler.class
 com/retailr/catalog/dto/UpdateCategoryRequest$UpdateCategoryRequestBuilder.class
 com/retailr/catalog/entity/Product$ProductBuilder.class
+com/retailr/catalog/event/LowStockAlertMessage.class
 com/retailr/catalog/repository/LowStockAlertRepository.class
 com/retailr/catalog/entity/Category$CategoryBuilder.class
 com/retailr/catalog/dto/CreateStockMovementRequest.class
@@ -24,9 +25,13 @@ com/retailr/catalog/dto/CategoryDTO$CategoryDTOBuilder.class
 com/retailr/catalog/dto/CreateSupplierRequest$CreateSupplierRequestBuilder.class
 com/retailr/catalog/dto/CreateCategoryRequest.class
 com/retailr/catalog/entity/Supplier.class
+com/retailr/catalog/event/StockUpdateMessage$StockUpdateMessageBuilder.class
+com/retailr/catalog/config/WebSocketConfig.class
 com/retailr/catalog/entity/StockMovement.class
 com/retailr/catalog/controller/CategoryController.class
+com/retailr/catalog/service/RealTimeService.class
 com/retailr/catalog/dto/UpdateCategoryRequest.class
+com/retailr/catalog/event/StockUpdateEvent$MovementType.class
 com/retailr/catalog/repository/WarehouseRepository.class
 com/retailr/catalog/dto/ProductDTO$ProductDTOBuilder.class
 com/retailr/catalog/dto/UpdateSupplierRequest.class
@@ -39,11 +44,15 @@ com/retailr/catalog/dto/SupplierDTO$SupplierDTOBuilder.class
 com/retailr/catalog/service/SupplierService.class
 com/retailr/catalog/service/StockService.class
 com/retailr/catalog/entity/Supplier$SupplierBuilder.class
+com/retailr/catalog/event/StockUpdateEvent.class
 com/retailr/catalog/dto/WarehouseDTO.class
 com/retailr/catalog/entity/LowStockAlert.class
+com/retailr/catalog/event/StockUpdateEvent$StockUpdateEventBuilder.class
 com/retailr/catalog/repository/ProductSupplierRepository.class
+com/retailr/catalog/event/StockUpdateMessage.class
 com/retailr/catalog/repository/StockMovementRepository.class
 com/retailr/catalog/entity/StockItem$StockItemBuilder.class
+com/retailr/catalog/event/LowStockAlertMessage$LowStockAlertMessageBuilder.class
 com/retailr/catalog/dto/WarehouseDTO$WarehouseDTOBuilder.class
 com/retailr/catalog/exception/StockException.class
 com/retailr/catalog/service/CategoryService.class

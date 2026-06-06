@@ -16,14 +16,14 @@ export type AppErrorCode =
 export class AppError extends Error {
   public readonly code: AppErrorCode;
   public readonly status?: number;
-  public readonly validationErrors?: Record<string, string>;
+  public readonly validationErrors?: Record<string, unknown>;
   public readonly originalError?: unknown;
 
   constructor(
     message: string,
     code: AppErrorCode,
     status?: number,
-    validationErrors?: Record<string, string>,
+    validationErrors?: Record<string, unknown>,
     originalError?: unknown,
   ) {
     super(message);
@@ -40,7 +40,7 @@ export class AppError extends Error {
       apiError.message,
       code,
       apiError.status,
-      apiError.details as Record<string, string> | undefined,
+      apiError.details,
     );
   }
 }

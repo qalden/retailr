@@ -1,0 +1,1 @@
+import{j as r}from"./index-BHj0OFCL.js";import"./redux-DlGERYbQ.js";import"./vendor-CmW2yknL.js";const i=()=>r.jsxs("main",{style:{padding:24},children:[r.jsx("h1",{children:"Orders"}),r.jsx("p",{children:"Order management coming soon."})]});export{i as default};

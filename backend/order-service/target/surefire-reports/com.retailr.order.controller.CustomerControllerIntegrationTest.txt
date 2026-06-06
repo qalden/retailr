@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.retailr.order.controller.CustomerControllerIntegrationTest
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.903 s -- in com.retailr.order.controller.CustomerControllerIntegrationTest

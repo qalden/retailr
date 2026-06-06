@@ -26,6 +26,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GatewayConfig {
 
+    // Issue 4: Create static config instances to reuse across all routes
+    private static final JwtAuthenticationFilter.Config JWT_CONFIG = new JwtAuthenticationFilter.Config();
+    private static final RateLimitFilter.Config RATE_LIMIT_CONFIG = new RateLimitFilter.Config();
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RateLimitFilter rateLimitFilter;
 
@@ -45,7 +49,7 @@ public class GatewayConfig {
                 .path("/api/v1/auth/**")
                 .filters(f -> f
                         .stripPrefix(1)
-                        .filter(rateLimitFilter.apply(new RateLimitFilter.Config()))
+                        .filter(rateLimitFilter.apply(RATE_LIMIT_CONFIG))
                 )
                 .uri("http://localhost:8081"))
 
@@ -54,7 +58,7 @@ public class GatewayConfig {
                 .path("/api/v1/products/**", "/api/v1/suppliers/**", "/api/v1/categories/**")
                 .filters(f -> f
                         .stripPrefix(1)
-                        .filter(rateLimitFilter.apply(new RateLimitFilter.Config()))
+                        .filter(rateLimitFilter.apply(RATE_LIMIT_CONFIG))
                 )
                 .uri("http://localhost:8082"))
 
@@ -65,8 +69,8 @@ public class GatewayConfig {
                 .path("/api/v1/stock/**")
                 .filters(f -> f
                         .stripPrefix(1)
-                        .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))
-                        .filter(rateLimitFilter.apply(new RateLimitFilter.Config()))
+                        .filter(jwtAuthenticationFilter.apply(JWT_CONFIG))
+                        .filter(rateLimitFilter.apply(RATE_LIMIT_CONFIG))
                 )
                 .uri("http://localhost:8082"))
 
@@ -75,8 +79,8 @@ public class GatewayConfig {
                 .path("/api/v1/orders/**", "/api/v1/customers/**")
                 .filters(f -> f
                         .stripPrefix(1)
-                        .filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config()))
-                        .filter(rateLimitFilter.apply(new RateLimitFilter.Config()))
+                        .filter(jwtAuthenticationFilter.apply(JWT_CONFIG))
+                        .filter(rateLimitFilter.apply(RATE_LIMIT_CONFIG))
                 )
                 .uri("http://localhost:8083"))
 

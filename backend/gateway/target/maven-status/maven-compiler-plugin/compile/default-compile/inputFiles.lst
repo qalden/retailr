@@ -1,3 +1,5 @@
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/gateway/src/main/java/com/retailr/gateway/GatewayApplication.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/gateway/src/main/java/com/retailr/gateway/config/GatewayConfig.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/gateway/src/main/java/com/retailr/gateway/filter/RateLimitFilter.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/gateway/src/main/java/com/retailr/gateway/exception/GatewayException.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/gateway/src/main/java/com/retailr/gateway/security/JwtAuthenticationFilter.java

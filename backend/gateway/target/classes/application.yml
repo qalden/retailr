@@ -1,10 +1,12 @@
+server:
+  port: 8080
+
 spring:
   application:
-    name: api-gateway
+    name: retailr-gateway
   cloud:
     gateway:
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      # CORS configuration for frontend access
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -15,27 +17,46 @@ spring:
               - PUT
               - DELETE
               - OPTIONS
+              - PATCH
             allowedHeaders: "*"
+            exposedHeaders:
+              - Authorization
+              - X-User-Id
+              - X-User-Email
+              - X-User-Role
             allowCredentials: true
-    discovery:
-      client:
-        simple:
-          instances:
-            auth-service:
-              - uri: http://auth-service:8081
-            catalog-service:
-              - uri: http://catalog-service:8082
-            order-service:
-              - uri: http://order-service:8083
+      # Default filters applied to all routes
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+      # Enable route definitions in RouteLocator bean
+      routes: []
 
-server:
-  port: 8080
+# JWT Configuration
+# Note: jwt.secret MUST be set via environment variable or external configuration
+# Do not hardcode secrets in version-controlled files
+jwt:
+  expiration: 3600000  # 1 hour in milliseconds
 
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka
+# Resilience4j Rate Limiter Configuration
+resilience4j:
+  ratelimiter:
+    configs:
+      default:
+        limitRefreshPeriod: 1m
+        limitForPeriod: 1000
+        timeoutDuration: 1s
+        registerHealthIndicator: true
+    instances:
+      global:
+        baseLimiters:
+          limitRefreshPeriod: 1m
+          limitForPeriod: 1000
+          timeoutDuration: 1s
 
+# Logging Configuration
 logging:
   level:
+    root: INFO
+    com.retailr.gateway: DEBUG
     org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG

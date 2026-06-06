@@ -22,12 +22,6 @@ const initialState: UiSliceState = {
   sidebarCollapsed: false,
 };
 
-// ─── Helpers ──────────────────────────────────────────────────────────────
-
-function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-}
-
 // ─── Slice ────────────────────────────────────────────────────────────────
 
 const uiSlice = createSlice({
@@ -39,10 +33,9 @@ const uiSlice = createSlice({
     },
     showNotification(
       state,
-      action: PayloadAction<Omit<Notification, 'id'>>,
+      action: PayloadAction<Notification>,
     ) {
       state.notifications.push({
-        id: generateId(),
         autoHideDuration: 5000,
         ...action.payload,
       });

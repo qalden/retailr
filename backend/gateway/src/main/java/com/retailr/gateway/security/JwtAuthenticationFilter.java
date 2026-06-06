@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import jakarta.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 
 /**
@@ -26,11 +27,18 @@ import javax.crypto.SecretKey;
 @Component
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
 
-    @Value("${jwt.secret:my-test-secret-key-that-is-long-enough-for-hs256-algorithm}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
     public JwtAuthenticationFilter() {
         super(Config.class);
+    }
+
+    @PostConstruct
+    public void validateConfiguration() {
+        if (jwtSecret == null || jwtSecret.isBlank()) {
+            throw new IllegalStateException("jwt.secret property must be configured");
+        }
     }
 
     /**
@@ -69,10 +77,26 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                 log.debug("JWT token validated successfully for user: {}", claims.getSubject());
 
                 // Add user claims to request headers for downstream services
+                // Issue 1: Check userId claim is not null
+                Long userId = claims.get("userId", Long.class);
+                if (userId == null) {
+                    log.error("JWT token missing userId claim");
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse().setComplete();
+                }
+
+                // Issue 3: Check role claim is not null or blank
+                String role = claims.get("role", String.class);
+                if (role == null || role.isBlank()) {
+                    log.error("JWT token missing or empty role claim");
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse().setComplete();
+                }
+
                 var mutatedRequest = exchange.getRequest().mutate()
-                        .header("X-User-Id", claims.get("userId", Long.class).toString())
+                        .header("X-User-Id", userId.toString())
                         .header("X-User-Email", claims.getSubject())
-                        .header("X-User-Role", claims.get("role", String.class))
+                        .header("X-User-Role", role)
                         .build();
 
                 var mutatedExchange = exchange.mutate().request(mutatedRequest).build();
