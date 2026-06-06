@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useWebSocketConnection } from './useWebSocketConnection';
 import { wsClient } from '@/utils/websocketClient';
@@ -36,7 +36,7 @@ export function useStockSubscription(enabled: boolean = true): UseStockSubscript
   const { connected } = useWebSocketConnection();
   const data = useSelector(selectAllStockItems);
   const subscriptionRef = useRef<boolean>(false);
-  const errorRef = useRef<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Only subscribe if enabled, connected, and not already subscribed
@@ -66,13 +66,13 @@ export function useStockSubscription(enabled: boolean = true): UseStockSubscript
             } as StockItem)
           );
 
-          errorRef.current = null;
+          setError(null);
         } catch (parseError: unknown) {
           const errorMessage =
             parseError instanceof Error
               ? parseError.message
               : 'Failed to parse stock update message';
-          errorRef.current = errorMessage;
+          setError(errorMessage);
           console.error('Error parsing stock update:', parseError);
         }
       });
@@ -81,7 +81,7 @@ export function useStockSubscription(enabled: boolean = true): UseStockSubscript
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Failed to subscribe to stock updates';
-      errorRef.current = errorMessage;
+      setError(errorMessage);
       subscriptionRef.current = false;
     }
 
@@ -101,7 +101,7 @@ export function useStockSubscription(enabled: boolean = true): UseStockSubscript
   return {
     data,
     loading: false,
-    error: errorRef.current,
+    error,
     subscribed: subscriptionRef.current && connected,
   };
 }

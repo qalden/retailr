@@ -4,6 +4,7 @@ import MainLayout from '@/pages/Layout/MainLayout';
 import DataTable, { type ColumnDef } from '@/components/shared/DataTable';
 import Modal from '@/components/shared/Modal';
 import OrderStatusBadge from '@/components/orders/OrderStatusBadge';
+import { useOrderSubscription } from '@/hooks/useOrderSubscription';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
   selectAllOrders,
@@ -33,6 +34,7 @@ const OrderListPage: React.FC = () => {
   const orders = useAppSelector(selectAllOrders);
   const loading = useAppSelector(selectOrdersLoading);
   const error = useAppSelector(selectOrdersError);
+  const { subscribed: wsSubscribed } = useOrderSubscription();
 
   // Local state for delete confirmation
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -96,12 +98,20 @@ const OrderListPage: React.FC = () => {
       <div className={styles.pageContainer}>
         <div className={styles.header}>
           <h1 className={styles.title}>Orders</h1>
-          <button
-            className={styles.createButton}
-            onClick={() => navigate('/orders/create')}
-          >
-            Create Order
-          </button>
+          <div className={styles.headerRight}>
+            {wsSubscribed && (
+              <div className={styles.liveIndicator}>
+                <span className={styles.liveDot}></span>
+                <span className={styles.liveText}>Live Updates</span>
+              </div>
+            )}
+            <button
+              className={styles.createButton}
+              onClick={() => navigate('/orders/create')}
+            >
+              Create Order
+            </button>
+          </div>
         </div>
 
         <div className={styles.tableContainer}>

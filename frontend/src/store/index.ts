@@ -6,6 +6,7 @@ import customersReducer from './slices/customersSlice';
 import suppliersReducer from './slices/suppliersSlice';
 import stockReducer from './slices/stockSlice';
 import uiReducer from './slices/uiSlice';
+import rtReducer from './slices/rtSlice';
 
 // ─── Store ────────────────────────────────────────────────────────────────
 
@@ -18,6 +19,7 @@ export const store = configureStore({
     suppliers: suppliersReducer,
     stock: stockReducer,
     ui: uiReducer,
+    realtime: rtReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

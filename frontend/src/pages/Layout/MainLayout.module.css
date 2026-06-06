@@ -5,6 +5,38 @@
   background-color: var(--color-background);
 }
 
+.connectionStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+
+.statusDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #fff;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.statusText {
+  white-space: nowrap;
+}
+
 .layoutBody {
   display: flex;
   flex: 1;

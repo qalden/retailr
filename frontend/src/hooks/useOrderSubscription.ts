@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useWebSocketConnection } from './useWebSocketConnection';
 import { wsClient } from '@/utils/websocketClient';
@@ -35,7 +35,7 @@ export function useOrderSubscription(enabled: boolean = true): UseOrderSubscript
   const { connected } = useWebSocketConnection();
   const data = useSelector(selectAllOrders);
   const subscriptionRef = useRef<boolean>(false);
-  const errorRef = useRef<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Only subscribe if enabled, connected, and not already subscribed
@@ -79,13 +79,13 @@ export function useOrderSubscription(enabled: boolean = true): UseOrderSubscript
             } as Order)
           );
 
-          errorRef.current = null;
+          setError(null);
         } catch (parseError: unknown) {
           const errorMessage =
             parseError instanceof Error
               ? parseError.message
               : 'Failed to parse order update message';
-          errorRef.current = errorMessage;
+          setError(errorMessage);
           console.error('Error parsing order update:', parseError);
         }
       });
@@ -94,7 +94,7 @@ export function useOrderSubscription(enabled: boolean = true): UseOrderSubscript
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Failed to subscribe to order updates';
-      errorRef.current = errorMessage;
+      setError(errorMessage);
       subscriptionRef.current = false;
     }
 
@@ -114,7 +114,7 @@ export function useOrderSubscription(enabled: boolean = true): UseOrderSubscript
   return {
     data,
     loading: false,
-    error: errorRef.current,
+    error,
     subscribed: subscriptionRef.current && connected,
   };
 }

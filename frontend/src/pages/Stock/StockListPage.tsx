@@ -5,6 +5,7 @@ import Modal from '@/components/shared/Modal';
 import Skeleton from '@/components/shared/Skeleton';
 import AlertBanner from '@/components/stock/AlertBanner';
 import StockAdjustForm from '@/components/stock/StockAdjustForm';
+import { useStockSubscription } from '@/hooks/useStockSubscription';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
   selectAllStockItems,
@@ -29,6 +30,7 @@ const StockListPage: React.FC = () => {
   const loading = useAppSelector(selectStockLoading);
   const error = useAppSelector(selectStockError);
   const alerts = useAppSelector(selectUnacknowledgedAlerts);
+  const { subscribed: wsSubscribed } = useStockSubscription();
 
   const [adjustModalOpen, setAdjustModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<StockItemWithDetails | null>(null);
@@ -146,6 +148,12 @@ const StockListPage: React.FC = () => {
             <h1 className={styles.title}>Stock</h1>
             <p className={styles.subtitle}>Manage inventory across all warehouses</p>
           </div>
+          {wsSubscribed && (
+            <div className={styles.liveIndicator}>
+              <span className={styles.liveDot}></span>
+              <span className={styles.liveText}>Live Updates</span>
+            </div>
+          )}
         </div>
 
         {error && (

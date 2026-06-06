@@ -5,6 +5,8 @@ com/retailr/order/controller/OrderControllerTest.class
 com/retailr/order/config/WebSocketConfigTest.class
 com/retailr/order/controller/CustomerControllerTest$StubCustomerService.class
 com/retailr/order/controller/OrderControllerIntegrationTest.class
+com/retailr/order/service/RealTimeServiceTest.class
 com/retailr/order/service/CustomerServiceIntegrationTest.class
 com/retailr/order/service/OrderServiceIntegrationTest.class
 com/retailr/order/controller/CustomerControllerTest.class
+com/retailr/order/service/RealTimeServiceTest$FakeSimpMessagingTemplate.class
