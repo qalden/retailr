@@ -38,8 +38,8 @@ vi.mock('@stomp/stompjs', () => ({
 export function resetWebSocketClient() {
   // Access private properties through type assertion for testing
   const client = wsClient as any;
-  client['statusCallbacks']?.clear?.() || (client['statusCallbacks'] = []);
-  client['errorCallbacks']?.clear?.() || (client['errorCallbacks'] = []);
+  client['statusCallbacks'] = [];
+  client['errorCallbacks'] = [];
   client['subscriptions']?.clear?.() || (client['subscriptions'] = new Map());
   client['reconnectAttempts'] = 0;
   client['connectCallback'] = undefined;
