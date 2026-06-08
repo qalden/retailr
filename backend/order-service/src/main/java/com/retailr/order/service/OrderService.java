@@ -120,15 +120,23 @@ public class OrderService {
                 });
 
         log.debug("Fetching orders for customer id: {} with pagination", customerId);
-        
+
         // Pre-fetch lines to avoid N+1 in map
         List<Order> orders = orderRepository.findByCustomerIdWithLines(customerId);
         List<OrderDTO> dtos = orders.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
-        
+
         // Create page from list (preserves pagination semantics)
         return new PageImpl<>(dtos, pageable, dtos.size());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<OrderDTO> listAllOrders(Pageable pageable) {
+        log.debug("Fetching all orders with pagination");
+        // Fetch all orders without customer filter for filtering operations
+        return orderRepository.findAll(pageable)
+                .map(this::mapToDTO);
     }
 
     @Transactional
