@@ -1,0 +1,308 @@
+/* FilterPanel Component Styles */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filtersContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.filterRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr 44px;
+  gap: var(--spacing-md);
+  align-items: center;
+  padding: var(--spacing-md);
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.filterRow:hover {
+  background-color: var(--color-bg-tertiary);
+  border-color: var(--color-primary);
+}
+
+.fieldSelect,
+.operatorSelect,
+.valueSelect,
+.valueInput {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+}
+
+.fieldSelect,
+.operatorSelect,
+.valueSelect {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"%3E%3Cpolyline points="6 9 12 15 18 9"%3E%3C/polyline%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 28px;
+}
+
+.fieldSelect:hover,
+.operatorSelect:hover,
+.valueSelect:hover,
+.valueInput:hover {
+  border-color: var(--color-primary);
+}
+
+.fieldSelect:focus,
+.operatorSelect:focus,
+.valueSelect:focus,
+.valueInput:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.fieldSelect:disabled,
+.operatorSelect:disabled,
+.valueSelect:disabled,
+.valueInput:disabled {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.valueInput {
+  cursor: text;
+}
+
+.removeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background-color: var(--color-danger-light, rgba(239, 68, 68, 0.1));
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.removeButton:hover {
+  background-color: var(--color-danger);
+  color: white;
+  transform: scale(1.05);
+}
+
+.removeButton:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.removeButton:active {
+  transform: scale(0.95);
+}
+
+.addButton {
+  align-self: flex-start;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px dashed var(--color-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.addButton:hover {
+  background-color: var(--color-primary);
+  color: white;
+  border-style: solid;
+}
+
+.addButton:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.addButton:active {
+  transform: translateY(1px);
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: var(--spacing-md) 0;
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+}
+
+.applyButton,
+.cancelButton {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  outline: none;
+  border: 1px solid transparent;
+}
+
+.applyButton {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.applyButton:hover {
+  background-color: var(--color-primary-dark, #2563eb);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+}
+
+.applyButton:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.applyButton:active {
+  transform: translateY(0);
+}
+
+.cancelButton {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.cancelButton:hover {
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-text-muted);
+}
+
+.cancelButton:focus {
+  box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.2);
+}
+
+.cancelButton:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+
+@media (max-width: 1024px) {
+  .filterRow {
+    grid-template-columns: 1fr 1fr 1fr 44px;
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+
+  .filterRow {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+  }
+
+  .fieldSelect,
+  .operatorSelect,
+  .valueSelect,
+  .valueInput {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    padding-right: 24px;
+  }
+
+  .removeButton {
+    width: 36px;
+    height: 36px;
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .applyButton,
+  .cancelButton {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .addButton {
+    width: 100%;
+    justify-self: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-md);
+  }
+
+  .filterRow {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xs);
+  }
+
+  .removeButton {
+    grid-column: 1;
+    width: 100%;
+    height: auto;
+    padding: var(--spacing-xs);
+  }
+
+  .fieldSelect,
+  .operatorSelect,
+  .valueSelect,
+  .valueInput {
+    width: 100%;
+  }
+
+  .title {
+    font-size: var(--font-size-md);
+  }
+}
