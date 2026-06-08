@@ -6,7 +6,8 @@ COPY gateway ./gateway
 COPY auth-service ./auth-service
 COPY catalog-service ./catalog-service
 COPY order-service ./order-service
-RUN mvn clean install -DskipTests -pl auth-service -am
+RUN mvn clean package -DskipTests -pl auth-service -am && \
+    mvn org.springframework.boot:spring-boot-maven-plugin:3.2.0:repackage -pl auth-service -DskipTests
 
 # Runtime stage
 FROM eclipse-temurin:17-jdk
