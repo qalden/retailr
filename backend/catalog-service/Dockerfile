@@ -6,7 +6,7 @@ COPY gateway ./gateway
 COPY auth-service ./auth-service
 COPY catalog-service ./catalog-service
 COPY order-service ./order-service
-RUN mvn clean package -DskipTests -pl catalog-service -am
+RUN mvn clean install -DskipTests -pl catalog-service -am
 
 # Runtime stage
 FROM eclipse-temurin:17-jdk
