@@ -33,6 +33,11 @@ services:
       AUTH_SERVICE_URL: http://auth-service:8081
       CATALOG_SERVICE_URL: http://catalog-service:8082
       ORDER_SERVICE_URL: http://order-service:8083
+      ELASTIC_APM_SERVER_URLS: http://apm-server:8200
+      ELASTIC_APM_SERVICE_NAME: retailr-gateway
+      ELASTIC_APM_ENABLED: "true"
+      LOGSTASH_HOST: logstash
+      LOGSTASH_PORT: 5000
     ports:
       - "8080:8080"
     depends_on:
@@ -54,6 +59,11 @@ services:
       SPRING_DATASOURCE_PASSWORD: retailr_password
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SERVER_PORT: 8081
+      ELASTIC_APM_SERVER_URLS: http://apm-server:8200
+      ELASTIC_APM_SERVICE_NAME: retailr-auth-service
+      ELASTIC_APM_ENABLED: "true"
+      LOGSTASH_HOST: logstash
+      LOGSTASH_PORT: 5000
     ports:
       - "8081:8081"
     depends_on:
@@ -75,6 +85,11 @@ services:
       SPRING_DATASOURCE_PASSWORD: retailr_password
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SERVER_PORT: 8082
+      ELASTIC_APM_SERVER_URLS: http://apm-server:8200
+      ELASTIC_APM_SERVICE_NAME: retailr-catalog-service
+      ELASTIC_APM_ENABLED: "true"
+      LOGSTASH_HOST: logstash
+      LOGSTASH_PORT: 5000
     ports:
       - "8082:8082"
     depends_on:
@@ -96,6 +111,11 @@ services:
       SPRING_DATASOURCE_PASSWORD: retailr_password
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
       SERVER_PORT: 8083
+      ELASTIC_APM_SERVER_URLS: http://apm-server:8200
+      ELASTIC_APM_SERVICE_NAME: retailr-order-service
+      ELASTIC_APM_ENABLED: "true"
+      LOGSTASH_HOST: logstash
+      LOGSTASH_PORT: 5000
     ports:
       - "8083:8083"
     depends_on:
@@ -121,10 +141,94 @@ services:
       - retailr-network
     restart: unless-stopped
 
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    container_name: retailr-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - retailr-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Logstash
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.13.0
+    container_name: retailr-logstash
+    volumes:
+      - ./backend/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
+    ports:
+      - "5000:5000"
+      - "9600:9600"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - retailr-network
+    restart: unless-stopped
+
+  # Kibana
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.0
+    container_name: retailr-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - retailr-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5601/api/status || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Elastic APM Server
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.13.0
+    container_name: retailr-apm-server
+    ports:
+      - "8200:8200"
+    environment:
+      - apm-server.host=0.0.0.0:8200
+      - apm-server.rum.enabled=true
+      - apm-server.rum.event_rate.limit=300
+      - apm-server.rum.event_rate.lru_size=400
+      - output.elasticsearch.hosts=['elasticsearch:9200']
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - retailr-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8200/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
 networks:
   retailr-network:
     driver: bridge
 
 volumes:
   postgres_data:
+    driver: local
+  elasticsearch_data:
     driver: local

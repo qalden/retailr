@@ -106,8 +106,23 @@
       <version>1.18.38</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>net.logstash.logback</groupId>
+      <artifactId>logstash-logback-encoder</artifactId>
+      <version>7.4</version>
+    </dependency>
+    <dependency>
+      <groupId>co.elastic.logging</groupId>
+      <artifactId>logback-ecs-encoder</artifactId>
+      <version>1.5.0</version>
+    </dependency>
+    <dependency>
+      <groupId>co.elastic.apm</groupId>
+      <artifactId>elastic-apm-agent</artifactId>
+      <version>1.50.0</version>
+    </dependency>
 
-    
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
