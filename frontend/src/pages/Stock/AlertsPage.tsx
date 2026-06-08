@@ -181,7 +181,6 @@ const AlertsPage: React.FC = () => {
           <DataTable
             columns={columns}
             data={alertsWithDetails}
-            idField="id"
             loading={loading || detailsLoading}
             error={null}
             onEdit={(row: unknown) => {

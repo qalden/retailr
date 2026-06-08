@@ -5,6 +5,9 @@ import Modal from '@/components/shared/Modal';
 import Skeleton from '@/components/shared/Skeleton';
 import AlertBanner from '@/components/stock/AlertBanner';
 import StockAdjustForm from '@/components/stock/StockAdjustForm';
+import SearchInput from '@/components/shared/SearchInput';
+import FilterPanel from '@/components/shared/FilterPanel';
+import SavedFilters from '@/components/shared/SavedFilters';
 import { useStockSubscription } from '@/hooks/useStockSubscription';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
@@ -14,6 +17,14 @@ import {
   selectUnacknowledgedAlerts,
   fetchStock,
 } from '@/store/slices/stockSlice';
+import { useSearch } from '@/hooks/useSearch';
+import { useFilter } from '@/hooks/useFilter';
+import { useSort } from '@/hooks/useSort';
+import { useURLState } from '@/hooks/useURLState';
+import { applyFilters } from '@/utils/filterUtils';
+import { matchesSearch } from '@/utils/searchUtils';
+import { sortData } from '@/utils/sortData';
+import { STOCK_FILTERS } from '@/utils/filterConfig';
 import type { StockItem, Product } from '@/types/domain';
 import { axiosClient } from '@/api/axiosClient';
 import styles from './StockListPage.module.css';
@@ -32,10 +43,17 @@ const StockListPage: React.FC = () => {
   const alerts = useAppSelector(selectUnacknowledgedAlerts);
   const { subscribed: wsSubscribed } = useStockSubscription();
 
+  // Search, filter, sort hooks
+  const { search, tokens, setSearchValue } = useSearch();
+  const { filters, setAllFilters } = useFilter();
+  const { sort, setSortBy } = useSort();
+  useURLState(); // Sync to URL
+
   const [adjustModalOpen, setAdjustModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<StockItemWithDetails | null>(null);
   const [itemsWithDetails, setItemsWithDetails] = useState<StockItemWithDetails[]>([]);
   const [detailsLoading, setDetailsLoading] = useState(false);
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
 
   useEffect(() => {
     dispatch(fetchStock());
@@ -97,23 +115,37 @@ const StockListPage: React.FC = () => {
     dispatch(fetchStock());
   };
 
+  // Apply transformations in order: filters → search → sort
+  let displayData = itemsWithDetails;
+  displayData = applyFilters(displayData, filters);
+  displayData = displayData.filter((item) =>
+    matchesSearch(item, tokens, ['productSku', 'quantity'])
+  );
+  if (sort) {
+    displayData = sortData(displayData, sort.field, sort.direction);
+  }
+
+  // DataTable columns (all sortable)
   const columns: ColumnDef[] = [
-    { header: 'SKU', key: 'productSku' },
-    { header: 'Product', key: 'productName' },
-    { header: 'Warehouse', key: 'warehouseName' },
+    { header: 'SKU', key: 'productSku', sortable: true },
+    { header: 'Product', key: 'productName', sortable: true },
+    { header: 'Warehouse', key: 'warehouseName', sortable: true },
     {
-      header: 'Quantity',
+      header: 'Qty',
       key: 'quantity',
+      sortable: true,
       render: (value) => <span className={styles.cellValue}>{value as number}</span>,
     },
     {
       header: 'Reserved',
       key: 'reservedQuantity',
+      sortable: true,
       render: (value) => <span className={styles.cellValue}>{value as number}</span>,
     },
     {
       header: 'Available',
       key: 'availableQuantity',
+      sortable: true,
       render: (_, row) => {
         const rowData = row as StockItemWithDetails;
         const available = rowData.quantity - rowData.reservedQuantity;
@@ -156,6 +188,35 @@ const StockListPage: React.FC = () => {
           )}
         </div>
 
+        {/* Search Input */}
+        <SearchInput value={search} onChange={setSearchValue} placeholder="Search by SKU or Quantity..." />
+
+        {/* Filter Controls */}
+        <div className={styles.filterControls}>
+          <button
+            className={styles.filterButton}
+            onClick={() => setShowFilterPanel(!showFilterPanel)}
+          >
+            Filters {filters.length > 0 && `(${filters.length})`}
+          </button>
+        </div>
+
+        {/* Filter Panel */}
+        {showFilterPanel && (
+          <FilterPanel
+            filters={filters}
+            filterDefinitions={STOCK_FILTERS}
+            onApply={(newFilters) => {
+              setAllFilters(newFilters);
+              setShowFilterPanel(false);
+            }}
+            onCancel={() => setShowFilterPanel(false)}
+          />
+        )}
+
+        {/* Saved Filters */}
+        <SavedFilters />
+
         {error && (
           <div className={styles.errorContainer}>
             <svg className={styles.errorIcon} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,11 +238,11 @@ const StockListPage: React.FC = () => {
           ) : null}
           <DataTable
             columns={columns}
-            data={itemsWithDetails}
-            idField="id"
+            data={displayData}
             loading={loading || detailsLoading}
             error={null}
             onEdit={(row: unknown) => handleAdjustStock(row as StockItemWithDetails)}
+            onSort={(field) => setSortBy(field)}
           />
         </div>
 

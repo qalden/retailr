@@ -79,7 +79,6 @@ const CustomerListPage: React.FC = () => {
           <DataTable
             columns={columns}
             data={customers}
-            idField="id"
             loading={loading}
             error={error}
             onDelete={(row) => handleDelete(row as Customer)}

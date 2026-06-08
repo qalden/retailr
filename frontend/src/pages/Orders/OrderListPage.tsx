@@ -4,6 +4,9 @@ import MainLayout from '@/pages/Layout/MainLayout';
 import DataTable, { type ColumnDef } from '@/components/shared/DataTable';
 import Modal from '@/components/shared/Modal';
 import OrderStatusBadge from '@/components/orders/OrderStatusBadge';
+import SearchInput from '@/components/shared/SearchInput';
+import FilterPanel from '@/components/shared/FilterPanel';
+import SavedFilters from '@/components/shared/SavedFilters';
 import { useOrderSubscription } from '@/hooks/useOrderSubscription';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
@@ -12,6 +15,14 @@ import {
   selectOrdersError,
 } from '@/store/slices/ordersSlice';
 import { fetchOrders, deleteOrder } from '@/store/slices/ordersSlice';
+import { useSearch } from '@/hooks/useSearch';
+import { useFilter } from '@/hooks/useFilter';
+import { useSort } from '@/hooks/useSort';
+import { useURLState } from '@/hooks/useURLState';
+import { applyFilters } from '@/utils/filterUtils';
+import { matchesSearch } from '@/utils/searchUtils';
+import { sortData } from '@/utils/sortData';
+import { ORDER_FILTERS } from '@/utils/filterConfig';
 import type { Order } from '@/types/domain';
 import styles from './OrderListPage.module.css';
 
@@ -25,6 +36,7 @@ import styles from './OrderListPage.module.css';
  * - Shows error message on fail
  * - Wraps in MainLayout
  * - Uses theme tokens
+ * - Integrates search, filter, and sort functionality
  */
 const OrderListPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -36,9 +48,16 @@ const OrderListPage: React.FC = () => {
   const error = useAppSelector(selectOrdersError);
   const { subscribed: wsSubscribed } = useOrderSubscription();
 
+  // Search, filter, sort hooks
+  const { search, tokens, setSearchValue } = useSearch();
+  const { filters, setAllFilters } = useFilter();
+  const { sort, setSortBy } = useSort();
+  useURLState(); // Sync to URL
+
   // Local state for delete confirmation
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
 
   // Fetch orders on mount
   useEffect(() => {
@@ -64,31 +83,46 @@ const OrderListPage: React.FC = () => {
     setSelectedOrder(null);
   };
 
-  // DataTable columns
+  // Apply transformations in order: filters → search → sort
+  let displayData = orders;
+  displayData = applyFilters(displayData, filters);
+  displayData = displayData.filter((item) =>
+    matchesSearch(item, tokens, ['orderNumber', 'status'])
+  );
+  if (sort) {
+    displayData = sortData(displayData, sort.field, sort.direction);
+  }
+
+  // DataTable columns (all sortable)
   const columns: ColumnDef[] = [
     {
       header: 'Order #',
       key: 'orderNumber',
+      sortable: true,
       render: (value) => `#${value}`,
     },
     {
       header: 'Customer',
       key: 'customer.name',
+      sortable: true,
       render: (_, row) => (row as Order).customer.name,
     },
     {
       header: 'Status',
       key: 'status',
+      sortable: true,
       render: (value) => <OrderStatusBadge status={value as Order['status']} />,
     },
     {
       header: 'Total',
       key: 'totalAmount',
+      sortable: true,
       render: (value) => `$${(value as number).toFixed(2)}`,
     },
     {
       header: 'Date',
       key: 'createdAt',
+      sortable: true,
       render: (value) => new Date(value as string).toLocaleDateString(),
     },
   ];
@@ -114,15 +148,44 @@ const OrderListPage: React.FC = () => {
           </div>
         </div>
 
+        {/* Search Input */}
+        <SearchInput value={search} onChange={setSearchValue} placeholder="Search by Order # or Status..." />
+
+        {/* Filter Controls */}
+        <div className={styles.filterControls}>
+          <button
+            className={styles.filterButton}
+            onClick={() => setShowFilterPanel(!showFilterPanel)}
+          >
+            Filters {filters.length > 0 && `(${filters.length})`}
+          </button>
+        </div>
+
+        {/* Filter Panel */}
+        {showFilterPanel && (
+          <FilterPanel
+            filters={filters}
+            filterDefinitions={ORDER_FILTERS}
+            onApply={(newFilters) => {
+              setAllFilters(newFilters);
+              setShowFilterPanel(false);
+            }}
+            onCancel={() => setShowFilterPanel(false)}
+          />
+        )}
+
+        {/* Saved Filters */}
+        <SavedFilters />
+
         <div className={styles.tableContainer}>
           <DataTable
             columns={columns}
-            data={orders}
-            idField="id"
+            data={displayData}
             loading={loading}
             error={error}
             onEdit={(row) => handleEdit(row as Order)}
             onDelete={(row) => handleDelete(row as Order)}
+            onSort={(field) => setSortBy(field)}
           />
         </div>
 

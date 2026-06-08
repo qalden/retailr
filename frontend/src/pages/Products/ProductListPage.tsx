@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/pages/Layout/MainLayout';
 import DataTable, { type ColumnDef } from '@/components/shared/DataTable';
 import Modal from '@/components/shared/Modal';
+import SearchInput from '@/components/shared/SearchInput';
+import FilterPanel from '@/components/shared/FilterPanel';
+import SavedFilters from '@/components/shared/SavedFilters';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
   selectAllProducts,
@@ -10,6 +13,14 @@ import {
   selectProductsError,
 } from '@/store/slices/productsSlice';
 import { fetchProducts, deleteProduct, updateProduct } from '@/store/slices/productsSlice';
+import { useSearch } from '@/hooks/useSearch';
+import { useFilter } from '@/hooks/useFilter';
+import { useSort } from '@/hooks/useSort';
+import { useURLState } from '@/hooks/useURLState';
+import { applyFilters } from '@/utils/filterUtils';
+import { matchesSearch } from '@/utils/searchUtils';
+import { sortData } from '@/utils/sortData';
+import { PRODUCT_FILTERS } from '@/utils/filterConfig';
 import type { Product } from '@/types/domain';
 import styles from './ProductListPage.module.css';
 
@@ -19,6 +30,7 @@ import styles from './ProductListPage.module.css';
  * - Shows loading/error states
  * - Allows edit/delete operations
  * - Provides navigation to create product
+ * - Integrates search, filter, and sort functionality
  */
 const ProductListPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -29,11 +41,18 @@ const ProductListPage: React.FC = () => {
   const loading = useAppSelector(selectProductsLoading);
   const error = useAppSelector(selectProductsError);
 
+  // Search, filter, sort hooks
+  const { search, tokens, setSearchValue } = useSearch();
+  const { filters, setAllFilters } = useFilter();
+  const { sort, setSortBy } = useSort();
+  useURLState(); // Sync to URL
+
   // Local state for edit modal
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [editPrice, setEditPrice] = useState<string>('');
   const [editThreshold, setEditThreshold] = useState<string>('');
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
 
   // Fetch products on mount
   useEffect(() => {
@@ -70,28 +89,43 @@ const ProductListPage: React.FC = () => {
     }
   };
 
-  // DataTable columns
+  // Apply transformations in order: filters → search → sort
+  let displayData = products;
+  displayData = applyFilters(displayData, filters);
+  displayData = displayData.filter((item) =>
+    matchesSearch(item, tokens, ['sku', 'name'])
+  );
+  if (sort) {
+    displayData = sortData(displayData, sort.field, sort.direction);
+  }
+
+  // DataTable columns (all sortable)
   const columns: ColumnDef[] = [
     {
       header: 'SKU',
       key: 'sku',
+      sortable: true,
     },
     {
       header: 'Name',
       key: 'name',
+      sortable: true,
     },
     {
       header: 'Price',
       key: 'unitPrice',
+      sortable: true,
       render: (value) => `$${(value as number).toFixed(2)}`,
     },
     {
       header: 'Category',
       key: 'categoryName',
+      sortable: true,
     },
     {
       header: 'Threshold',
       key: 'lowStockThreshold',
+      sortable: true,
     },
   ];
 
@@ -108,15 +142,44 @@ const ProductListPage: React.FC = () => {
           </button>
         </div>
 
+        {/* Search Input */}
+        <SearchInput value={search} onChange={setSearchValue} placeholder="Search by SKU or Name..." />
+
+        {/* Filter Controls */}
+        <div className={styles.filterControls}>
+          <button
+            className={styles.filterButton}
+            onClick={() => setShowFilterPanel(!showFilterPanel)}
+          >
+            Filters {filters.length > 0 && `(${filters.length})`}
+          </button>
+        </div>
+
+        {/* Filter Panel */}
+        {showFilterPanel && (
+          <FilterPanel
+            filters={filters}
+            filterDefinitions={PRODUCT_FILTERS}
+            onApply={(newFilters) => {
+              setAllFilters(newFilters);
+              setShowFilterPanel(false);
+            }}
+            onCancel={() => setShowFilterPanel(false)}
+          />
+        )}
+
+        {/* Saved Filters */}
+        <SavedFilters />
+
         <div className={styles.tableContainer}>
           <DataTable
             columns={columns}
-            data={products}
-            idField="id"
+            data={displayData}
             loading={loading}
             error={error}
             onEdit={(row) => handleEdit(row as Product)}
             onDelete={(row) => handleDelete(row as Product)}
+            onSort={(field) => setSortBy(field)}
           />
         </div>
 
