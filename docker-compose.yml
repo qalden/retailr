@@ -1,0 +1,130 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: retailr-postgres
+    environment:
+      POSTGRES_USER: retailr_user
+      POSTGRES_PASSWORD: retailr_password
+      POSTGRES_DB: retailr_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U retailr_user -d retailr_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - retailr-network
+
+  # API Gateway
+  gateway:
+    build:
+      context: ./backend
+      dockerfile: ./gateway/Dockerfile
+    container_name: retailr-gateway
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/retailr_db
+      SPRING_DATASOURCE_USERNAME: retailr_user
+      SPRING_DATASOURCE_PASSWORD: retailr_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      AUTH_SERVICE_URL: http://auth-service:8081
+      CATALOG_SERVICE_URL: http://catalog-service:8082
+      ORDER_SERVICE_URL: http://order-service:8083
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - retailr-network
+    restart: unless-stopped
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./backend
+      dockerfile: ./auth-service/Dockerfile
+    container_name: retailr-auth-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/retailr_db
+      SPRING_DATASOURCE_USERNAME: retailr_user
+      SPRING_DATASOURCE_PASSWORD: retailr_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SERVER_PORT: 8081
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - retailr-network
+    restart: unless-stopped
+
+  # Catalog Service
+  catalog-service:
+    build:
+      context: ./backend
+      dockerfile: ./catalog-service/Dockerfile
+    container_name: retailr-catalog-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/retailr_db
+      SPRING_DATASOURCE_USERNAME: retailr_user
+      SPRING_DATASOURCE_PASSWORD: retailr_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SERVER_PORT: 8082
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - retailr-network
+    restart: unless-stopped
+
+  # Order Service
+  order-service:
+    build:
+      context: ./backend
+      dockerfile: ./order-service/Dockerfile
+    container_name: retailr-order-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/retailr_db
+      SPRING_DATASOURCE_USERNAME: retailr_user
+      SPRING_DATASOURCE_PASSWORD: retailr_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SERVER_PORT: 8083
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - retailr-network
+    restart: unless-stopped
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    container_name: retailr-frontend
+    environment:
+      VITE_API_BASE_URL: http://localhost:8080
+    ports:
+      - "3000:3000"
+    depends_on:
+      - gateway
+    networks:
+      - retailr-network
+    restart: unless-stopped
+
+networks:
+  retailr-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
