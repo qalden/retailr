@@ -7,6 +7,8 @@ import suppliersReducer from './slices/suppliersSlice';
 import stockReducer from './slices/stockSlice';
 import uiReducer from './slices/uiSlice';
 import rtReducer from './slices/rtSlice';
+import filterReducer from './slices/filterSlice';
+import savedFiltersReducer from './slices/savedFiltersSlice';
 
 // ─── Store ────────────────────────────────────────────────────────────────
 
@@ -20,6 +22,8 @@ export const store = configureStore({
     stock: stockReducer,
     ui: uiReducer,
     realtime: rtReducer,
+    filters: filterReducer,
+    savedFilters: savedFiltersReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
