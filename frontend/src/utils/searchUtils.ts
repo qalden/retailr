@@ -30,7 +30,7 @@ export function tokenizeSearch(searchString: string): string[] {
  * @returns true if all tokens found in at least one field, false otherwise
  */
 export function matchesSearch(
-  obj: Record<string, unknown>,
+  obj: any,
   tokens: string[],
   searchFields: string[]
 ): boolean {

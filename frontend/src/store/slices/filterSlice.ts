@@ -1,4 +1,4 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createSelector, type PayloadAction } from '@reduxjs/toolkit';
 import type { Filter } from '@/utils/filterUtils';
 import type { RootState } from '@/store';
 
@@ -93,12 +93,15 @@ export const selectFilters = (state: RootState) => state.filters.filters;
 export const selectSort = (state: RootState) => state.filters.sort;
 export const selectPage = (state: RootState) => state.filters.page;
 
-export const selectFilterState = (state: RootState) => ({
-  search: state.filters.search,
-  filters: state.filters.filters,
-  sort: state.filters.sort,
-  page: state.filters.page,
-});
+export const selectFilterState = createSelector(
+  [(state: RootState) => state.filters],
+  (filters) => ({
+    search: filters.search,
+    filters: filters.filters,
+    sort: filters.sort,
+    page: filters.page,
+  })
+);
 
 // ─── Reducer ───────────────────────────────────────────────────────────────
 

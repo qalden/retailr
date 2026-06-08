@@ -15,7 +15,7 @@ export interface Filter {
  * Check if a single object matches a filter condition.
  * Pure function with no side effects.
  */
-export function matchesFilter(obj: Record<string, unknown>, filter: Filter): boolean {
+export function matchesFilter(obj: any, filter: Filter): boolean {
   const { field, operator, value } = filter;
   const fieldValue = obj[field];
 
@@ -75,7 +75,7 @@ export function matchesFilter(obj: Record<string, unknown>, filter: Filter): boo
  * Apply multiple filters to an array of objects using AND logic.
  * Pure function with no side effects.
  */
-export function applyFilters<T extends Record<string, unknown>>(
+export function applyFilters<T>(
   items: T[],
   filters: Filter[]
 ): T[] {

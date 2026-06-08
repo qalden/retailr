@@ -135,6 +135,8 @@ describe('rtSlice', () => {
         suppliers: {} as any,
         stock: {} as any,
         ui: {} as any,
+        filters: {} as any,
+        savedFilters: {} as any,
         realtime: {
           connected: true,
           connecting: false,
@@ -154,6 +156,8 @@ describe('rtSlice', () => {
         suppliers: {} as any,
         stock: {} as any,
         ui: {} as any,
+        filters: {} as any,
+        savedFilters: {} as any,
         realtime: {
           connected: false,
           connecting: true,
@@ -174,6 +178,8 @@ describe('rtSlice', () => {
         suppliers: {} as any,
         stock: {} as any,
         ui: {} as any,
+        filters: {} as any,
+        savedFilters: {} as any,
         realtime: {
           connected: false,
           connecting: false,

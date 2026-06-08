@@ -1,40 +1,42 @@
 import React, { ReactNode } from 'react';
 import Skeleton from './Skeleton';
 import EmptyState from './EmptyState';
+import SortableHeader from './SortableHeader';
 import styles from './DataTable.module.css';
 
 export interface ColumnDef {
   header: string;
   key: string;
+  sortable?: boolean;
   render?: (value: unknown, row: unknown) => ReactNode;
 }
 
 interface DataTableProps {
   columns: ColumnDef[];
   data: unknown[];
-  /**
-   * Field name used to identify each row uniquely.
-   * Defaults to 'id'. Falls back to rowIndex if the field is missing.
-   */
-  idField?: string;
   loading?: boolean;
   error?: string | null;
   onEdit?: (row: unknown) => void;
   onDelete?: (row: unknown) => void;
+  sortField?: string | null;
+  sortOrder?: 'asc' | 'desc' | null;
+  onSort?: (fieldName: string) => void;
 }
 
 /**
  * DataTable component for displaying tabular data
- * Supports loading states, error handling, and action buttons
+ * Supports loading states, error handling, action buttons, and sortable columns
  */
 export const DataTable: React.FC<DataTableProps> = ({
   columns,
   data,
-  idField = 'id',
   loading = false,
   error = null,
   onEdit,
   onDelete,
+  sortField = null,
+  sortOrder = null,
+  onSort,
 }) => {
   // Show error state
   if (error) {
@@ -59,7 +61,13 @@ export const DataTable: React.FC<DataTableProps> = ({
           <tr className={styles.headerRow}>
             {columns.map((column) => (
               <th key={column.key} className={styles.headerCell}>
-                {column.header}
+                <SortableHeader
+                  label={column.header}
+                  sortable={column.sortable}
+                  sortField={sortField}
+                  sortOrder={sortOrder}
+                  onSort={onSort}
+                />
               </th>
             ))}
             {hasActions && (
@@ -88,11 +96,8 @@ export const DataTable: React.FC<DataTableProps> = ({
             ))
           ) : (
             // Show actual data rows
-            data.map((row, rowIndex) => {
-              // Use stable unique identifier from row, fallback to rowIndex
-              const rowId = (row as Record<string, unknown>)[idField]?.toString() ?? rowIndex;
-              return (
-              <tr key={rowId} className={styles.bodyRow}>
+            data.map((row, rowIndex) => (
+              <tr key={rowIndex} className={styles.bodyRow}>
                 {columns.map((column) => (
                   <td key={`${rowIndex}-${column.key}`} className={styles.bodyCell}>
                     {column.render
@@ -128,8 +133,7 @@ export const DataTable: React.FC<DataTableProps> = ({
                   </td>
                 )}
               </tr>
-              );
-            })
+            ))
           )}
         </tbody>
       </table>
