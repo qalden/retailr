@@ -133,6 +133,128 @@ Axios client handles HTTP requests with:
 - Error handling and retry logic
 - CORS support
 
+## Search, Filter & Sort
+
+The platform includes an advanced search, filtering, and sorting system integrated into all list pages (Products, Orders, Stock).
+
+### Quick Start
+
+**Search by keyword:**
+
+```typescript
+import { useSearch } from '@/hooks/useSearch';
+
+function ProductList() {
+  const { search, setSearchValue } = useSearch();
+  
+  return (
+    <input
+      value={search}
+      onChange={(e) => setSearchValue(e.target.value)}
+      placeholder="Search products..."
+    />
+  );
+}
+```
+
+**Filter with conditions:**
+
+```typescript
+import { useFilter } from '@/hooks/useFilter';
+import { applyFilters } from '@/utils/filterUtils';
+
+function ProductList() {
+  const { filters, addFilter, setAllFilters } = useFilter();
+  const products = useAppSelector(selectAllProducts);
+  
+  // Apply filters to data
+  const filtered = applyFilters(products, filters);
+  
+  return (
+    <div>
+      <button onClick={() => addFilter({
+        field: 'unitPrice',
+        operator: 'gte',
+        value: 500
+      })}>
+        Filter by Price
+      </button>
+    </div>
+  );
+}
+```
+
+**Sort columns:**
+
+```typescript
+import { useSort } from '@/hooks/useSort';
+import { sortData } from '@/utils/sortData';
+
+function ProductList() {
+  const { sort, setSortBy } = useSort();
+  const products = useAppSelector(selectAllProducts);
+  
+  // Apply sort to data
+  const sorted = sort 
+    ? sortData(products, sort.field, sort.direction)
+    : products;
+  
+  return (
+    <button onClick={() => setSortBy('unitPrice')}>
+      Sort by Price {sort?.direction === 'asc' ? '↑' : '↓'}
+    </button>
+  );
+}
+```
+
+**Integrate with URL persistence:**
+
+```typescript
+import { useURLState } from '@/hooks/useURLState';
+
+function ProductListPage() {
+  // This hook syncs all filter state to URL automatically
+  useURLState();
+  
+  // All filter state now persists in URL
+  // Browser back/forward supported
+  // Page refresh preserves filters
+}
+```
+
+### Features
+
+- **Multi-field Search:** Search across multiple fields with tokenization (AND logic for tokens, OR logic for fields)
+- **Flexible Filtering:** Multiple operators (equals, contains, range comparisons, array membership)
+- **Multiple Filters:** Combine filters with AND logic
+- **Column Sorting:** Click to sort ascending/descending/clear
+- **Saved Presets:** Save and load filter combinations
+- **URL Persistence:** All state serialized to URL for browser navigation support
+- **Debounced Search:** 500ms debounce prevents excessive updates
+- **Pure Functions:** Core utilities with zero external dependencies
+- **Type Safe:** Full TypeScript support
+
+### Documentation
+
+See [Search, Filter & Sort Integration Guide](../docs/SEARCH_FILTERING.md) for comprehensive documentation covering:
+
+- Architecture and data flow
+- API reference for utilities and hooks
+- Redux state management details
+- Component usage and configuration
+- Performance considerations
+- Troubleshooting guide
+
+### Testing
+
+See [Search, Filter & Sort Testing Guide](../docs/SEARCH_FILTERING_TESTING.md) for comprehensive testing procedures:
+
+- Manual test scenarios for each feature
+- End-to-end testing procedures
+- Cross-browser compatibility testing
+- Performance benchmarking
+- Test result checklists
+
 ## WebSocket Real-Time Updates
 
 ### Quick Start
