@@ -1,0 +1,46 @@
+.label {
+  display: inline-block;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  transition: color var(--transition-fast);
+}
+
+.button:hover {
+  color: var(--color-primary);
+}
+
+.button.active {
+  color: var(--color-primary);
+}
+
+.indicator {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75em;
+  font-weight: 700;
+  line-height: 1;
+  width: 1em;
+  height: 1em;
+}
+
+.indicator.asc {
+  color: var(--color-primary);
+}
+
+.indicator.desc {
+  color: var(--color-primary);
+}
