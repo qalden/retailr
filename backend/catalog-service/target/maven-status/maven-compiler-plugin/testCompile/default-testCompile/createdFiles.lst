@@ -3,6 +3,7 @@ com/retailr/catalog/repository/ProductRepositoryTest.class
 com/retailr/catalog/repository/StockItemRepositoryTest.class
 com/retailr/catalog/controller/SupplierControllerTest.class
 com/retailr/catalog/controller/ProductControllerTest$StubProductService.class
+com/retailr/catalog/controller/ProductFilterControllerTest$StubProductService.class
 com/retailr/catalog/service/ProductServiceTest.class
 com/retailr/catalog/service/RealTimeServiceTest.class
 com/retailr/catalog/controller/SupplierControllerTest$StubSupplierService.class
@@ -18,3 +19,4 @@ com/retailr/catalog/service/RealTimeServiceTest$NullMessageChannel.class
 com/retailr/catalog/repository/WarehouseRepositoryTest.class
 com/retailr/catalog/service/StockServiceTest.class
 com/retailr/catalog/controller/CategoryControllerTest.class
+com/retailr/catalog/controller/ProductFilterControllerTest.class

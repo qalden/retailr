@@ -3,8 +3,10 @@
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/main/java/com/retailr/order/controller/OrderController.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/main/java/com/retailr/order/config/RestClientConfig.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/main/java/com/retailr/order/dto/UpdateOrderStatusRequest.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/main/java/com/retailr/order/dto/FilterDTO.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/main/java/com/retailr/order/OrderServiceApplication.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/main/java/com/retailr/order/repository/OrderRepository.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/main/java/com/retailr/order/controller/OrderFilterController.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/main/java/com/retailr/order/controller/PaginationConstants.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/main/java/com/retailr/order/event/OrderUpdateEvent.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/main/java/com/retailr/order/dto/UpdateCustomerRequest.java

@@ -1,0 +1,37 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: retailr-auth-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/retailr_db}
+    username: ${SPRING_DATASOURCE_USERNAME:retailr_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:retailr_password}
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    show-sql: false
+  flyway:
+    enabled: false
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.retailr.auth: DEBUG
+    org.springframework.security: DEBUG
+
+# Elastic APM Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      simple:
+        enabled: true

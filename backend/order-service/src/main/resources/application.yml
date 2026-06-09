@@ -5,13 +5,16 @@ spring:
   application:
     name: retailr-order-service
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/retailr_db}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/retailr_db}
     username: ${SPRING_DATASOURCE_USERNAME:retailr_user}
     password: ${SPRING_DATASOURCE_PASSWORD:retailr_password}
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+      ddl-auto: update
     show-sql: false
+  flyway:
+    enabled: false
 
 # Logging Configuration
 logging:

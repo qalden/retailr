@@ -4,6 +4,7 @@ com/retailr/order/config/RestClientConfig.class
 com/retailr/order/service/OrderService$1.class
 com/retailr/order/dto/UpdateCustomerRequest$UpdateCustomerRequestBuilder.class
 com/retailr/order/event/OrderUpdateMessage$OrderUpdateMessageBuilder.class
+com/retailr/order/controller/OrderFilterController.class
 com/retailr/order/exception/OrderException.class
 com/retailr/order/dto/OrderDTO$OrderDTOBuilder.class
 com/retailr/order/dto/CreateOrderRequest$CreateOrderRequestBuilder.class
@@ -22,6 +23,7 @@ com/retailr/order/dto/OrderLineDTO.class
 com/retailr/order/dto/CreateOrderRequest.class
 com/retailr/order/exception/DuplicateEmailException.class
 com/retailr/order/repository/OrderRepository.class
+com/retailr/order/dto/FilterDTO.class
 com/retailr/order/config/WebSocketConfig.class
 com/retailr/order/dto/OrderDTO.class
 com/retailr/order/OrderServiceApplication.class
@@ -50,6 +52,7 @@ com/retailr/order/entity/Order$OrderBuilder.class
 com/retailr/order/event/OrderUpdateMessage.class
 com/retailr/order/entity/OrderLine.class
 com/retailr/order/service/CustomerService.class
+com/retailr/order/dto/FilterDTO$FilterDTOBuilder.class
 com/retailr/order/dto/CustomerDTO.class
 com/retailr/order/dto/CreateCustomerRequest.class
 com/retailr/order/exception/CustomerNotFoundException.class

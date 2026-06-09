@@ -1,0 +1,11 @@
+# Override to disable ELK services if network is unavailable
+# Use: docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+services:
+  elasticsearch:
+    profiles: ["disabled"]
+  logstash:
+    profiles: ["disabled"]
+  kibana:
+    profiles: ["disabled"]
+  apm-server:
+    profiles: ["disabled"]

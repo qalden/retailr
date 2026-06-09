@@ -2,6 +2,7 @@
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/test/java/com/retailr/order/service/CustomerServiceIntegrationTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/test/java/com/retailr/order/service/OrderServiceIntegrationTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/test/java/com/retailr/order/config/TestSecurityConfig.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/test/java/com/retailr/order/controller/OrderFilterControllerTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/test/java/com/retailr/order/service/RealTimeServiceTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/test/java/com/retailr/order/config/WebSocketConfigTest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/order-service/src/test/java/com/retailr/order/controller/CustomerControllerTest.java

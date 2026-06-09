@@ -16,6 +16,7 @@
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/dto/CreateSupplierRequest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/dto/CreateProductRequest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/service/ProductService.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/controller/PaginationConstants.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/service/CategoryService.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/entity/Product.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/service/RealTimeService.java
@@ -31,6 +32,7 @@
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/entity/Category.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/event/StockUpdateEvent.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/dto/CategoryDTO.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/controller/ProductFilterController.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/dto/ProductDTO.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/controller/SupplierController.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/service/SupplierService.java
@@ -45,5 +47,6 @@
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/exception/BadPaginationException.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/repository/CategoryRepository.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/dto/UpdateSupplierRequest.java
+/Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/dto/FilterDTO.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/dto/CreateStockMovementRequest.java
 /Users/denniskalula/Dropbox/My Source/source/repos/retailr/backend/catalog-service/src/main/java/com/retailr/catalog/controller/CategoryController.java

@@ -1,0 +1,104 @@
+time="2026-06-08T10:47:38+03:00" level=warning msg="/Users/denniskalula/Dropbox/My Source/source/repos/retailr/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+ Image retailr-gateway Building 
+ Image retailr-auth-service Building 
+ Image retailr-catalog-service Building 
+ Image retailr-order-service Building 
+ Image retailr-frontend Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 2.85kB done
+#1 DONE 0.0s
+
+#2 [frontend internal] load build definition from Dockerfile
+#2 transferring dockerfile: 327B done
+#2 DONE 0.0s
+
+#3 [catalog-service internal] load build definition from Dockerfile
+#3 transferring dockerfile: 576B done
+#3 DONE 0.0s
+
+#4 [gateway internal] load build definition from Dockerfile
+#4 transferring dockerfile: 507B done
+#4 DONE 0.0s
+
+#5 [order-service internal] load build definition from Dockerfile
+#5 transferring dockerfile: 572B done
+#5 DONE 0.0s
+
+#6 [auth-service internal] load build definition from Dockerfile
+#6 transferring dockerfile: 570B done
+#6 DONE 0.0s
+
+#7 [auth-service internal] load metadata for docker.io/library/maven:3.9.6-eclipse-temurin-17
+#7 ...
+
+#8 [auth] library/maven:pull token for registry-1.docker.io
+#8 DONE 0.0s
+
+#9 [auth] library/eclipse-temurin:pull token for registry-1.docker.io
+#9 DONE 0.0s
+
+#10 [auth] library/node:pull token for registry-1.docker.io
+#10 DONE 0.0s
+
+#11 [auth-service internal] load metadata for docker.io/library/eclipse-temurin:17-jre-alpine
+#11 ...
+
+#12 [frontend internal] load metadata for docker.io/library/node:20-alpine
+#12 DONE 2.3s
+
+#13 [frontend internal] load .dockerignore
+#13 transferring context: 179B done
+#13 DONE 0.0s
+
+#14 [frontend builder 1/6] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#14 CACHED
+
+#15 [frontend stage-1 2/4] WORKDIR /app
+#15 CACHED
+
+#16 [frontend builder 2/6] WORKDIR /build
+#16 DONE 0.0s
+
+#17 [frontend internal] load build context
+#17 transferring context: 820.30kB 0.0s done
+#17 DONE 0.0s
+
+#18 [frontend builder 3/6] COPY package*.json ./
+#18 DONE 0.0s
+
+#19 [frontend builder 4/6] RUN npm ci
+#19 CANCELED
+
+#11 [order-service internal] load metadata for docker.io/library/eclipse-temurin:17-jre-alpine
+#11 ERROR: no match for platform in manifest: not found
+
+#7 [order-service internal] load metadata for docker.io/library/maven:3.9.6-eclipse-temurin-17
+#7 CANCELED
+
+#20 [frontend stage-1 3/4] RUN npm install -g serve
+#20 CANCELED
+------
+ > [order-service internal] load metadata for docker.io/library/eclipse-temurin:17-jre-alpine:
+------
+Dockerfile:12
+
+--------------------
+
+  10 |     
+
+  11 |     # Runtime stage
+
+  12 | >>> FROM eclipse-temurin:17-jre-alpine
+
+  13 |     WORKDIR /app
+
+  14 |     COPY --from=builder /build/order-service/target/*.jar app.jar
+
+--------------------
+
+target order-service: failed to solve: eclipse-temurin:17-jre-alpine: failed to resolve source metadata for docker.io/library/eclipse-temurin:17-jre-alpine: no match for platform in manifest: not found
+
+
+
+View build details: docker-desktop://dashboard/build/default/default/7wnje8q45ozyg0ewrsrz8k41w
+

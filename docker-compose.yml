@@ -58,7 +58,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/retailr_db
       SPRING_DATASOURCE_USERNAME: retailr_user
       SPRING_DATASOURCE_PASSWORD: retailr_password
-      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SERVER_PORT: 8081
       ELASTIC_APM_SERVER_URLS: http://apm-server:8200
       ELASTIC_APM_SERVICE_NAME: retailr-auth-service
@@ -84,7 +84,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/retailr_db
       SPRING_DATASOURCE_USERNAME: retailr_user
       SPRING_DATASOURCE_PASSWORD: retailr_password
-      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SERVER_PORT: 8082
       ELASTIC_APM_SERVER_URLS: http://apm-server:8200
       ELASTIC_APM_SERVICE_NAME: retailr-catalog-service
@@ -110,7 +110,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/retailr_db
       SPRING_DATASOURCE_USERNAME: retailr_user
       SPRING_DATASOURCE_PASSWORD: retailr_password
-      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SERVER_PORT: 8083
       ELASTIC_APM_SERVER_URLS: http://apm-server:8200
       ELASTIC_APM_SERVICE_NAME: retailr-order-service

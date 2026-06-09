@@ -1,4 +1,5 @@
 com/retailr/catalog/dto/StockMovementDTO$StockMovementDTOBuilder.class
+com/retailr/catalog/dto/FilterDTO.class
 com/retailr/catalog/entity/ProductSupplier$ProductSupplierBuilder.class
 com/retailr/catalog/controller/SupplierController.class
 com/retailr/catalog/exception/ErrorResponse$ErrorResponseBuilder.class
@@ -33,6 +34,7 @@ com/retailr/catalog/service/RealTimeService.class
 com/retailr/catalog/dto/UpdateCategoryRequest.class
 com/retailr/catalog/event/StockUpdateEvent$MovementType.class
 com/retailr/catalog/repository/WarehouseRepository.class
+com/retailr/catalog/controller/ProductFilterController.class
 com/retailr/catalog/dto/ProductDTO$ProductDTOBuilder.class
 com/retailr/catalog/dto/UpdateSupplierRequest.class
 com/retailr/catalog/dto/UpdateProductRequest$UpdateProductRequestBuilder.class
@@ -54,6 +56,7 @@ com/retailr/catalog/repository/StockMovementRepository.class
 com/retailr/catalog/entity/StockItem$StockItemBuilder.class
 com/retailr/catalog/event/LowStockAlertMessage$LowStockAlertMessageBuilder.class
 com/retailr/catalog/dto/WarehouseDTO$WarehouseDTOBuilder.class
+com/retailr/catalog/dto/FilterDTO$FilterDTOBuilder.class
 com/retailr/catalog/exception/StockException.class
 com/retailr/catalog/service/CategoryService.class
 com/retailr/catalog/entity/LowStockAlert$LowStockAlertBuilder.class
@@ -62,6 +65,7 @@ com/retailr/catalog/dto/CategoryDTO.class
 com/retailr/catalog/dto/CreateProductRequest.class
 com/retailr/catalog/dto/ProductDTO.class
 com/retailr/catalog/entity/Warehouse$WarehouseBuilder.class
+com/retailr/catalog/controller/PaginationConstants.class
 com/retailr/catalog/dto/CreateStockMovementRequest$CreateStockMovementRequestBuilder.class
 com/retailr/catalog/dto/CreateCategoryRequest$CreateCategoryRequestBuilder.class
 com/retailr/catalog/entity/Warehouse.class
