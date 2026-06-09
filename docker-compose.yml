@@ -152,7 +152,7 @@ services:
       - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
-      - "9200:9200"
+      - "9201:9200"
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
@@ -174,8 +174,8 @@ services:
     environment:
       - "LS_JAVA_OPTS=-Xmx256m -Xms256m"
     ports:
-      - "5000:5000"
-      - "9600:9600"
+      - "5001:5000"
+      - "9601:9600"
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -189,7 +189,7 @@ services:
     container_name: retailr-kibana
     profiles: ["elk"]
     ports:
-      - "5601:5601"
+      - "5602:5601"
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
     depends_on:
@@ -209,7 +209,7 @@ services:
     container_name: retailr-apm-server
     profiles: ["elk"]
     ports:
-      - "8200:8200"
+      - "8201:8200"
     environment:
       - apm-server.host=0.0.0.0:8200
       - apm-server.rum.enabled=true
